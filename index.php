@@ -17,12 +17,12 @@
   <div class="hero">
     <div class="carousel-container">
       <div class="carousel-track">
-        <img src="C:\xampp\htdocs\SAE.203_2.0\Image Caroussel\Image 1.jpg" alt="Image 1">
-        <img src="C:\xampp\htdocs\SAE.203_2.0\Image Caroussel\Image 2.jpg" alt="Image 2">
-        <img src="C:\xampp\htdocs\SAE.203_2.0\Image Caroussel\Image 3.webp" alt="Image 3">
-        <img src="C:\xampp\htdocs\SAE.203_2.0\Image Caroussel\Image 4.jpg" alt="Image 4">
-        <img src="C:\xampp\htdocs\SAE.203_2.0\Image Caroussel\Image 5.jpg" alt="Image 5">
-        <img src="C:\xampp\htdocs\SAE.203_2.0\Image Caroussel\Image 6.webp" alt="Image 6">
+        <img src="img/img1.jpg" alt="Image 1">
+        <img src="img/Image 2.jpg" alt="Image 2">
+        <img src="img/Image 3.webp" alt="Image 3">
+        <img src="img/Image 4.jpg" alt="Image 4">
+        <img src="img/Image 5.jpg" alt="Image 5">
+        <img src="img/Image 6.webp" alt="Image 6">
       </div>
     </div>
 
