@@ -10,7 +10,21 @@
 </head>
 <body>
 
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="accueil.html">E-LLUSION</a>
+  <ul class="nav-links">
+    <li><a href="accueil.html">Accueil</a></li>
+    <li><a href="salles.html">Les salles</a></li>
+    <li><a href="inscription.html">S'inscrire</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
 <main>
+
+ <!-- ─── ACCUEIL ─── -->
+<section id="accueil" class="active">
 
   <div class="hero">
     <h1 class="hero-title">E–LLUSION<span>.</span></h1>
@@ -19,8 +33,8 @@
       <strong>MMI1</strong> de l'Université Savoie Mont Blanc.
     </p>
     <div class="hero-buttons">
-      <button class="btn-primary" onclick="window.location='inscription.php'">S'inscrire →</button>
-      <button class="btn-outline" onclick="window.location='salles.php'">Découvrir l'expo</button>
+      <button class="btn-primary" onclick="showSection('inscription')">S'inscrire →</button>
+      <button class="btn-outline" onclick="showSection('salles')">Découvrir l'expo</button>
     </div>
     <div class="hero-meta">
       <span>📅 18 &amp; 19 juin 2026</span>
@@ -32,12 +46,12 @@
   <div class="explorer-section">
     <div class="explorer-label">Explorer</div>
     <div class="cards">
-      <div class="card" onclick="window.location='salles.php'">
+      <div class="card" onclick="showSection('salles')">
         <div class="card-dot"></div>
         <h3>Présentation</h3>
         <p>Découvrez les 4 salles immersives et leurs univers uniques créés par les étudiants MMI1.</p>
       </div>
-      <div class="card" onclick="window.location='inscription.php'">
+      <div class="card" onclick="showSection('inscription')">
         <div class="card-dot"></div>
         <h3>Participer</h3>
         <p>Inscrivez-vous pour vivre l'expérience E-LLUSION lors de l'exposition des 18 et 19 juin.</p>
@@ -50,8 +64,16 @@
     <p>E-LLUSION est une exposition conçue par les étudiants de première année du département MMI (Métiers du Multimédia et de l'Internet) de l'Université Savoie Mont Blanc. À travers 4 salles immersives, découvrez des installations interactives alliant art numérique, technologies multimédia et créativité. Chaque salle propose une expérience unique pensée pour questionner notre rapport au monde numérique et à la perception de la réalité.</p>
   </div>
 
-</main>
+</section>
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 E-LLUSION — MMI1 Université Savoie Mont Blanc</span>
+  <div style="display:flex;gap:1.5rem">
+    <a href="https://instagram.com/mmi_annecy" target="_blank">@mmichambery</a>
+    <a href="https://www.mmi-annecy.fr" target="_blank">Site MMI</a>
+  </div>
+</footer>
+
 </body>
 </html>
