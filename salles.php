@@ -1,4 +1,31 @@
-<?php include __DIR__ . '/includes/nav.php'; ?>
+<?php
+// Dynamic salles page
+try {
+    $pdo = new PDO('mysql:host=localhost;dbname=sae203;charset=utf8', 'root', 'local', [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+} catch (PDOException $e) {
+    die('Erreur BDD : ' . $e->getMessage());
+}
+
+$salles = $pdo->query('SELECT id_salle, numero, nom_thematique FROM salle ORDER BY numero')->fetchAll();
+
+// Pour chaque salle, récupérer le prochain créneau disponible
+$creneaux_map = [];
+$stmt = $pdo->query(
+    "SELECT c.id_creneau, c.id_salle, c.heure_debut, c.places_restante, d.date
+     FROM creneau c
+     JOIN date_expo d ON c.id_date = d.id_date
+     WHERE c.places_restante > 0
+     ORDER BY c.id_salle, d.date, c.heure_debut"
+);
+foreach ($stmt->fetchAll() as $r) {
+    if (!isset($creneaux_map[$r['id_salle']])) {
+        $creneaux_map[$r['id_salle']] = $r;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,6 +37,8 @@
 </head>
 <body>
 
+<?php include __DIR__ . '/includes/nav.php'; ?>
+
 <main>
 
   <div class="page-header">
@@ -18,24 +47,33 @@
   </div>
 
   <div class="salles-list">
-    <!-- salle cards copied -->
-    <div class="salle-card">
-      <span class="salle-tag">Salle 002</span>
-      <h2>Salle 002 — L'Envers du Décor</h2>
-      <p class="subtitle">Immersion dans un monde où réalité et virtualité se confondent</p>
-      <p>Comment l'illusion d'une société parfaite révèle-t-elle l'état de la nôtre ? Le thème principal de notre salle est de questionner les façades que la société se construit pour masquer ses contradictions, qu'il s'agisse du regard social sur les réseaux, du glamour de la mode ou de la mécanique de la consommation. Les trois œuvres montrent ainsi comment le numérique, en mettant en scène ces illusions, finit par révéler l'état réel d'un monde qui se rêve parfait.</p>
-      <p class="programme-label">Au programme :</p>
-      <div class="programme-grid">
-        <span class="programme-item">Installations interactives en réalité augmentée</span>
-        <span class="programme-item">Projections immersives 360°</span>
-        <span class="programme-item">Dispositifs tactiles et gestuels</span>
-        <span class="programme-item">Expérience multi-sensorielle</span>
-      </div>
-      <a class="btn-reserver" href="inscription.php?salle=Salle%20002">Réserver cette salle →</a>
-    </div>
-
-    <!-- other rooms omitted for brevity, original content included in file -->
-
+    <?php if (empty($salles)): ?>
+      <p>Aucune salle trouvée en base de données.</p>
+    <?php else: ?>
+      <?php foreach ($salles as $s): ?>
+        <div class="salle-card">
+          <span class="salle-tag">Salle <?= htmlspecialchars($s['numero']) ?></span>
+          <h2>Salle <?= htmlspecialchars($s['numero']) ?> — <?= htmlspecialchars($s['nom_thematique']) ?></h2>
+          <p class="subtitle">Présentation de la salle <?= htmlspecialchars($s['numero']) ?></p>
+          <p>Découvrez l'univers de la salle « <?= htmlspecialchars($s['nom_thematique']) ?> ».</p>
+          <p class="programme-label">Au programme :</p>
+          <div class="programme-grid">
+            <span class="programme-item">Installations interactives</span>
+            <span class="programme-item">Projections</span>
+            <span class="programme-item">Expériences sensorielles</span>
+          </div>
+          <?php if (isset($creneaux_map[$s['id_salle']])): $c = $creneaux_map[$s['id_salle']]; ?>
+            <a class="btn-reserver" href="inscription.php?creneau=<?= $c['id_creneau'] ?>">
+              Réserver — <?= substr($c['heure_debut'], 0, 5) ?> (<?= $c['places_restante'] ?> pl.)
+            </a>
+          <?php else: ?>
+            <a class="btn-reserver" href="inscription.php?salle=<?= urlencode('Salle ' . $s['numero']) ?>">
+              Réserver cette salle →
+            </a>
+          <?php endif; ?>
+        </div>
+      <?php endforeach; ?>
+    <?php endif; ?>
   </div>
 
   <div class="cta-band">
@@ -47,5 +85,6 @@
 </main>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
+
 </body>
 </html>
