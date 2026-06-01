@@ -71,6 +71,11 @@ try {
     <p>Quatre univers immersifs pour explorer les illusions du monde numérique</p>
   </div>
 
+  <div class="hero-buttons">
+    <a class="btn-primary" href="inscription.php">S'inscrire →</a>
+    <a class="btn-outline" href="salles.php">Découvrir l'expo</a>
+  </div>
+
   <div class="salles-list">
     <?php foreach ($salles as $s): ?>
       <div class="salle-card">

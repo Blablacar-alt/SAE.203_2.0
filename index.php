@@ -12,39 +12,51 @@
 
 <main>
 
- <!-- ─── ACCUEIL ─── -->
-<section id="accueil" class="active">
+ <section id="accueil" class="active">
 
   <div class="hero">
-    <h1 class="hero-title">E–LLUSION<span>.</span></h1>
-    <p class="hero-sub">
-      Une exposition d'art interactive et multimédia pensée par les étudiant·es
-      <strong>MMI1</strong> de l'Université Savoie Mont Blanc.
-    </p>
-    <div class="hero-buttons">
-      <button class="btn-primary" onclick="showSection('inscription')">S'inscrire →</button>
-      <button class="btn-outline" onclick="showSection('salles')">Découvrir l'expo</button>
+    <div class="carousel-container">
+      <div class="carousel-track">
+        <img src="C:\xampp\htdocs\SAE.203_2.0\Image Caroussel\Image 1.jpg" alt="Image 1">
+        <img src="C:\xampp\htdocs\SAE.203_2.0\Image Caroussel\Image 2.jpg" alt="Image 2">
+        <img src="C:\xampp\htdocs\SAE.203_2.0\Image Caroussel\Image 3.webp" alt="Image 3">
+        <img src="C:\xampp\htdocs\SAE.203_2.0\Image Caroussel\Image 4.jpg" alt="Image 4">
+        <img src="C:\xampp\htdocs\SAE.203_2.0\Image Caroussel\Image 5.jpg" alt="Image 5">
+        <img src="C:\xampp\htdocs\SAE.203_2.0\Image Caroussel\Image 6.webp" alt="Image 6">
+      </div>
     </div>
-    <div class="hero-meta">
-      <span>📅 18 &amp; 19 juin 2026</span>
-      <span>📍 IUT de Chambéry — USMB</span>
-      <span>✦ 4 salles immersives</span>
+
+    <div class="hero-content">
+      <h1 class="hero-title">E–LLUSION<span>.</span></h1>
+      <p class="hero-sub">
+        Une exposition d'art interactive et multimédia pensée par les étudiant·es
+        <strong>MMI1</strong> de l'Université Savoie Mont Blanc.
+      </p>
+      <div class="hero-buttons">
+        <a href="inscription.php" class="btn-primary">S'inscrire →</a>
+        <a href="salles.php" class="btn-outline">Découvrir l'expo</a>
+      </div>
+      <div class="hero-meta">
+        <span>📅 18 &amp; 19 juin 2026</span>
+        <span>📍 IUT de Chambéry — USMB</span>
+        <span>✦ 4 salles immersives</span>
+      </div>
     </div>
   </div>
 
   <div class="explorer-section">
     <div class="explorer-label">Explorer</div>
     <div class="cards">
-      <div class="card" onclick="showSection('salles')">
+      <a href="salles.php" class="card">
         <div class="card-dot"></div>
         <h3>Présentation</h3>
         <p>Découvrez les 4 salles immersives et leurs univers uniques créés par les étudiants MMI1.</p>
-      </div>
-      <div class="card" onclick="showSection('inscription')">
+      </a>
+      <a href="inscription.php" class="card">
         <div class="card-dot"></div>
         <h3>Participer</h3>
         <p>Inscrivez-vous pour vivre l'expérience E-LLUSION lors de l'exposition des 18 et 19 juin.</p>
-      </div>
+      </a>
     </div>
   </div>
 
@@ -55,7 +67,6 @@
 
 </section>
 
-<!-- FOOTER -->
 <footer>
   <span>© 2026 E-LLUSION — MMI1 Université Savoie Mont Blanc</span>
   <div style="display:flex;gap:1.5rem">

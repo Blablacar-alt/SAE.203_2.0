@@ -343,3 +343,114 @@
       .nav-links { gap: 1rem; }
       nav { padding: 0 1rem; }
     }
+/* ==========================================
+   NIVEAU SUPÉRIEUR : CARROUSEL & ANIMATIONS
+   ========================================== */
+
+/* 1. Ajustement des boutons transformés en liens (a) */
+.btn-primary, .btn-outline {
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+}
+
+/* 2. Structure du carrousel en arrière-plan */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--white);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.carousel-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  width: 600%;
+  height: 100%;
+  animation: scrollLeftToRight 50s infinite ease-in-out;
+}
+
+.carousel-track img {
+  width: 16.666%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.15;
+}
+
+@keyframes scrollLeftToRight {
+  0%, 14%    { transform: translateX(-83.333%); }
+  20%, 34%   { transform: translateX(-66.666%); }
+  40%, 54%   { transform: translateX(-50%); }
+  60%, 74%   { transform: translateX(-33.333%); }
+  80%, 94%   { transform: translateX(-16.666%); }
+  100%       { transform: translateX(0); }
+}
+
+/* 3. Animations d'apparition progressive (Fade In Up) */
+.hero-title, .hero-sub, .hero-buttons, .hero-meta {
+  opacity: 0;
+  animation: fadeInUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.hero-title { animation-delay: 0.2s; }
+.hero-sub   { animation-delay: 0.4s; }
+.hero-buttons { animation-delay: 0.6s; }
+.hero-meta  { animation-delay: 0.8s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 4. Effets "Magnifiques" sur les cartes d'exploration */
+.cards .card {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  border: 1px solid transparent;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              box-shadow 0.4s ease, 
+              border-color 0.4s ease;
+}
+
+/* Élévation au survol de la carte */
+.cards .card:hover {
+  transform: translateY(-8px);
+  border-color: var(--mint-dark);
+  box-shadow: 0 12px 30px rgba(17, 17, 17, 0.12);
+}
+
+/* Animation de la pastille (dot) dans la carte */
+.card-dot {
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.card:hover .card-dot {
+  transform: scale(1.2);
+  background-color: var(--accent); /* Devient rouge accent au survol */
+  animation: pulseDot 1.5s infinite ease-in-out alternate;
+}
+
+@keyframes pulseDot {
+  0% { box-shadow: 0 0 0 0 rgba(220, 48, 42, 0.4); }
+  100% { box-shadow: 0 0 0 10px rgba(220, 48, 42, 0); }
+}
