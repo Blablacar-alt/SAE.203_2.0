@@ -5,7 +5,7 @@ session_start();
 $host    = 'localhost';
 $db      = 'sae203';
 $user    = 'root';
-$pass    = '';
+$pass    = 'local';
 $charset = 'utf8';
 
 try {
