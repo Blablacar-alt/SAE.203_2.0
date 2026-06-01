@@ -17,7 +17,7 @@
   <div class="hero">
     <div class="carousel-container">
       <div class="carousel-track">
-        <img src="img/img1.jpg" alt="Image 1">
+        <img src="img/Image 1.jpg" alt="Image 1">
         <img src="img/Image 2.jpg" alt="Image 2">
         <img src="img/Image 3.webp" alt="Image 3">
         <img src="img/Image 4.jpg" alt="Image 4">
