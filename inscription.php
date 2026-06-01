@@ -135,15 +135,7 @@ $prefill_salle = $_GET['salle'] ?? '';
 </head>
 <body>
 
-<nav>
-  <a class="nav-logo" href="index.html">E-LLUSION</a>
-  <ul class="nav-links">
-    <li><a href="index.html">Accueil</a></li>
-    <li><a href="salles.html">Les salles</a></li>
-    <li><a href="inscription.php">S'inscrire</a></li>
-    <li><a href="contact.html">Contact</a></li>
-  </ul>
-</nav>
+<?php include __DIR__ . '/includes/nav.php'; ?>
 
 <main>
   <div class="page-header">
@@ -282,14 +274,7 @@ $prefill_salle = $_GET['salle'] ?? '';
   </div>
 </main>
 
-<footer>
-  <span>© 2026 E-LLUSION — MMI1 Université Savoie Mont Blanc</span>
-  <div style="display:flex;gap:1.5rem;align-items:center">
-    <a href="https://instagram.com/mmi_annecy" target="_blank">@mmichambery</a>
-    <a href="https://www.mmi-annecy.fr" target="_blank">Site MMI</a>
-    <a href="admin.php" style="font-size:.72rem;color:#bbb;text-decoration:none;font-family:'Space Mono',monospace;">⚙ Admin</a>
-  </div>
-</footer>
+<?php include __DIR__ . '/includes/footer.php'; ?>
 
 <script>
 let currentSalle = '<?= array_key_first($creneaux_data) ?? '' ?>';

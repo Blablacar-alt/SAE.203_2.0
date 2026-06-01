@@ -94,15 +94,7 @@ $can_buffet = in_array($ins['profil'] ?? '', $buffet_profils);
 </head>
 <body>
 
-<nav>
-  <a class="nav-logo" href="index.html">E-LLUSION</a>
-  <ul class="nav-links">
-    <li><a href="index.html">Accueil</a></li>
-    <li><a href="salles.html">Les salles</a></li>
-    <li><a href="inscription.php">S'inscrire</a></li>
-    <li><a href="contact.html">Contact</a></li>
-  </ul>
-</nav>
+<?php include __DIR__ . '/includes/nav.php'; ?>
 
 <main>
   <div class="page-header">
@@ -189,13 +181,7 @@ $can_buffet = in_array($ins['profil'] ?? '', $buffet_profils);
   </div>
 </main>
 
-<footer>
-  <span>© 2026 E-LLUSION — MMI1 Université Savoie Mont Blanc</span>
-  <div style="display:flex;gap:1.5rem">
-    <a href="https://instagram.com/mmi_annecy" target="_blank">@mmichambery</a>
-    <a href="https://www.mmi-annecy.fr" target="_blank">Site MMI</a>
-  </div>
-</footer>
+<?php include __DIR__ . '/includes/footer.php'; ?>
 
 </body>
 </html>
