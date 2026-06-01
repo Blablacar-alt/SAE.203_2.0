@@ -64,13 +64,12 @@ try {
 
 <?php include __DIR__ . '/includes/nav.php'; ?>
 
-<main>
+<main class="salles-page">
 
   <div class="page-header">
     <h1>LES SALLES</h1>
     <p>Quatre univers immersifs pour explorer les illusions du monde numérique</p>
   </div>
-
 
   <div class="salles-list">
     <?php foreach ($salles as $s): ?>
