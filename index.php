@@ -37,7 +37,10 @@
         <a href="salles.php" class="btn-outline">Découvrir l'expo</a>
       </div>
       <div class="hero-meta">
-        <span>📅 18 &amp; 19 juin 2026</span>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none">
+        <path d="M16 2V6M8 2V6M3 10H21M5 4H19C20.1046 4 21 4.89543 21 6V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V6C3 4.89543 3.89543 4 5 4Z" stroke="#EEEEEE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 2V6M8 2V6M3 10H21M5 4H19C20.1046 4 21 4.89543 21 6V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V6C3 4.89543 3.89543 4 5 4Z" stroke="#00BBAA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg> 18 &amp; 19 juin 2026</span>
         <span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 54 60" fill="none">
         <path d="M29.4038 0.375C16.7131 0.374988 4.375 10.5689 4.375 25.6841C4.375 38.6206 19.5359 54.2465 24.821 58.375L28.0945 58.375C28.9451 58.375 29.7728 58.1048 30.4441 57.5823C35.0493 53.997 53.375 38.9 53.375 25.6841C53.375 10.5689 42.0944 0.375012 29.4038 0.375Z" fill="#0B5243" stroke="#0B5243" stroke-width="0.75" stroke-linejoin="round"/>
         <path d="M0.375 25.8121C0.375 38.531 17.9189 53.4786 23.6302 58.0077C24.675 58.8362 26.1196 58.8225 27.1461 57.9714C32.6614 53.3993 49.375 38.4972 49.375 25.8121C49.375 10.6205 38.0944 0.375012 25.4038 0.375C12.7131 0.374988 0.375 10.6205 0.375 25.8121Z" fill="#0CC79F" stroke="#0B5243" stroke-width="0.75" stroke-linejoin="round"/>
