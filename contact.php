@@ -1,3 +1,4 @@
+<?php include __DIR__ . '/includes/nav.php'; ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -9,16 +10,6 @@
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a class="nav-logo" href="accueil.html">E-LLUSION</a>
-  <ul class="nav-links">
-    <li><a href="accueil.html">Accueil</a></li>
-    <li><a href="salles.html">Les salles</a></li>
-    <li><a href="inscription.html">S'inscrire</a></li>
-    <li><a href="contact.html">Contact</a></li>
-  </ul>
-</nav>
 
 <main>
 
@@ -105,15 +96,6 @@
   </div>
 
 </main>
-
-<!-- FOOTER -->
-<footer>
-  <span>© 2026 E-LLUSION — MMI1 Université Savoie Mont Blanc</span>
-  <div style="display:flex;gap:1.5rem">
-    <a href="https://instagram.com/mmi_annecy" target="_blank">@mmichambery</a>
-    <a href="https://www.mmi-annecy.fr" target="_blank">Site MMI</a>
-  </div>
-</footer>
-
+<?php include __DIR__ . '/includes/footer.php'; ?>
 </body>
 </html>
