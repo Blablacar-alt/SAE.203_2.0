@@ -174,7 +174,28 @@
   }
 
     /* ── SALLES ── */
-    #salles { background: var(--white); }
+    #salles { background: }
+  body {
+    background-image:
+    url("/Image fond\Style/fond_bleu_fonce1.png");
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+  }
+
+  .salles-page {
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* Assure que le contenu passe devant */
+  .page-header,
+  .salles-list,
+  .cta-band {
+    position: relative;
+    z-index: 1;
+  }
     .page-header {
       text-align: center;
       padding: 4rem 2rem 2rem;
@@ -485,7 +506,8 @@
 /* ── FOND PAGE SALLES ── */
 body {
   body {
-  background-image: url('/Image fond/Style 1/fond_bleu_fonce1.png');
+  background-image:
+  url("/Image fond\Style/fond_bleu_fonce1.png"),
 }
   background-attachment: fixed;
   background-repeat: no-repeat;
@@ -504,5 +526,4 @@ body {
 .cta-band {
   position: relative;
   z-index: 1;
-  background: rgba(255, 255, 255, 0.95);
 }
