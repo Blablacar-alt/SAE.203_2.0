@@ -92,7 +92,6 @@
           text-align: center;
           padding: 4rem 2rem;
           margin-top: 2rem;
-        }
         .cta-band h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: .5rem; }
         .cta-band p { font-size: .9rem; color: #444; margin-bottom: 1.5rem; }
       background: var(--mint);
@@ -485,27 +484,4 @@
 @keyframes pulseDot {
   0% { box-shadow: 0 0 0 0 rgba(220, 48, 42, 0.4); }
   100% { box-shadow: 0 0 0 10px rgba(220, 48, 42, 0); }
-}
-
-/* ── FOND PAGE SALLES ── */
-body {
-  background-image: url("./Image_fond/Style_1/fond_bleu_fonce1.png");
-  background-attachment: fixed;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  min-height: 100vh;
-}
-
-.salles-page {
-  position: relative;
-  min-height: 100vh;
-}
-
-/* Assure que le contenu passe devant */
-.page-header,
-.salles-list,
-.cta-band {
-  position: relative;
-  z-index: 1;
 }
