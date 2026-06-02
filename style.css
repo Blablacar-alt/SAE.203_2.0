@@ -560,3 +560,278 @@ body {
 .salles-page .cta-band .btn-primary:hover { background: transparent; color: var(--cyan); }
 
 .salles-page .dot-divider { position: relative; z-index: 1; height: 1px; background: repeating-linear-gradient(to right, var(--cyan) 0, var(--cyan) 4px, transparent 4px, transparent 12px); margin: 0 3rem; opacity: .25; }
+/* ==========================================
+   ── ACCUEIL SPECIFIQUE (index.php) ──
+   ========================================== */
+.home-page {
+  position: relative;
+  min-height: 100vh;
+  color: var(--ink);
+  z-index: 1;
+}
+
+/* 1. Section Hero (Entête principale) */
+.hero-section {
+  padding: 7rem 2rem 4rem;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.tech-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cyan-dark);
+  letter-spacing: 0.2em;
+  margin-bottom: 1.2rem;
+}
+
+.hero-title {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+/* Animation subtile de glitch d'apparition sur le titre */
+.hero-title::before, 
+.hero-title::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: transparent;
+}
+.hero-title::before {
+  left: 2px;
+  text-shadow: -1px 0 var(--cyan);
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-loop 4s infinite linear alternate-reverse;
+}
+.hero-title::after {
+  left: -2px;
+  text-shadow: -1px 0 var(--cyan-dark);
+  clip: rect(85px, 450px, 140px, 0);
+  animation: glitch-loop 4s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-loop {
+  0% { clip: rect(31px, 9999px, 94px, 0); }
+  20% { clip: rect(85px, 9999px, 5px, 0); }
+  40% { clip: rect(73px, 9999px, 29px, 0); }
+  60% { clip: rect(9px, 9999px, 43px, 0); }
+  80% { clip: rect(132px, 9999px, 101px, 0); }
+  100% { clip: rect(122px, 9999px, 134px, 0); }
+}
+
+.hero-tagline {
+  font-size: 1.05rem;
+  color: #666;
+  max-width: 480px;
+  margin: 0 auto 3.5rem;
+  line-height: 1.6;
+}
+
+/* Boutons d'action asymétriques style affiche */
+.hero-buttons {
+  display: flex;
+  gap: 1.5rem;
+  z-index: 5;
+}
+
+.btn-discover {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: .06em;
+  padding: 1rem 2rem;
+  background: var(--ink);
+  color: var(--white);
+  border: 2px solid var(--ink);
+  transition: all 0.2s ease;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+
+.btn-discover:hover {
+  background: transparent;
+  color: var(--ink);
+}
+
+.btn-ticket {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: .06em;
+  padding: 1rem 2rem;
+  background: var(--cyan);
+  color: var(--ink);
+  border: 2px solid var(--cyan);
+  transition: all 0.2s ease;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+
+.btn-ticket:hover {
+  background: var(--ink);
+  color: var(--white);
+  border-color: var(--ink);
+}
+
+/* Axe décoratif minimaliste */
+.vertical-axis {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--cyan), transparent);
+  margin-top: 3.5rem;
+}
+
+/* 2. Bandeau d'infos techniques horizontales */
+.info-banner {
+  background: var(--ink);
+  color: var(--white);
+  border-top: 1px dashed rgba(0, 229, 204, 0.3);
+  border-bottom: 1px dashed rgba(0, 229, 204, 0.3);
+}
+
+.banner-grid {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.info-block {
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: 'Space Mono', monospace;
+}
+
+.info-block:last-child {
+  border-right: none;
+}
+
+.info-label {
+  font-size: 0.65rem;
+  color: #777;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.4rem;
+}
+
+.info-value {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.countdown-block {
+  background: rgba(0, 229, 204, 0.04);
+}
+.countdown-block .info-value {
+  color: var(--cyan);
+}
+
+/* 3. Section Concept (Mise en page) */
+.concept-section {
+  padding: 6rem 2rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.concept-container {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+/* Boîtier de visée / Mire de l'affiche */
+.target-box {
+  width: 240px;
+  height: 240px;
+  border: 1px dashed rgba(10, 10, 10, 0.15);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--off);
+}
+
+.target-box .corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--ink);
+}
+.target-box .corner.tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+.target-box .corner.tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+.target-box .corner.bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+.target-box .corner.br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+.visual-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--cyan-dark);
+  letter-spacing: 0.05em;
+  animation: pulse-light 2.5s infinite ease-in-out alternate;
+}
+
+@keyframes pulse-light {
+  0% { opacity: 0.3; transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Textes de présentation */
+.section-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -6px; left: 0;
+  width: 35px; height: 2px;
+  background-color: var(--cyan);
+}
+
+.concept-text {
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 1.2rem;
+}
+
+.concept-text strong {
+  color: var(--ink);
+}
+
+/* 4. Gestion Responsive de l'Index */
+@media (max-width: 768px) {
+  .hero-section { padding-top: 5rem; }
+  .banner-grid { grid-template-columns: repeat(2, 1fr); }
+  .info-block { border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 1.2rem 1rem; }
+  .info-block:nth-child(2) { border-right: none; }
+  .concept-container { grid-template-columns: 1fr; gap: 3rem; text-align: center; justify-items: center; }
+  .section-title::after { left: 50%; transform: translateX(-50%); }
+  .hero-buttons { flex-direction: column; width: 100%; max-width: 260px; gap: 1rem; }
+}

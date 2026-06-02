@@ -1,12 +1,14 @@
 <?php
 // Public navigation partial
 ?>
-<nav>
-  <a class="nav-logo" href="index.php">E-LLUSION</a>
-  <ul class="nav-links">
-    <li><a href="index.php">Accueil</a></li>
-    <li><a href="salles.php">Les salles</a></li>
-    <li><a href="inscription.php">S'inscrire</a></li>
-    <li><a href="contact.php">Contact</a></li>
-  </ul>
+<nav class="main-nav">
+  <div class="nav-container">
+    <a href="index.php" class="nav-logo" data-text="E-LLUSION">E-LLUSION</a>
+    
+    <div class="nav-links">
+      <a href="index.php" class="nav-item">Accueil</a>
+      <a href="salles.php" class="nav-item">L'Expo</a>
+      <a href="inscription.php" class="btn-reserver">S'inscrire</a>
+    </div>
+  </div>
 </nav>
