@@ -1,377 +1,385 @@
-    /* ── Variables affiche ── */
-    :root {
-      --cyan: #00e5cc;
-      --cyan-dark: #00b8a0;
-      --cyan-light: #e0faf7;
-      --ink: #0a0a0a;
-      --ink-soft: #1a1a2e;
-      --white: #ffffff;
-      --off: #f5f5f0;
-    }
+/* ==================================================
+   ── CHARGEMENT DE LA POLICE PERSONNALISÉE ──
+   ================================================== */
+@font-face {
+  font-family: 'CutePixel';
+  src: url('fonts/CutePixel.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
+/* ── Variables affiche ── */
+:root {
+  --cyan: #00e5cc;
+  --cyan-dark: #00b8a0;
+  --cyan-light: #e0faf7;
+  --ink: #0a0a0a;
+  --ink-soft: #1a1a2e;
+  --white: #ffffff;
+  --off: #f5f5f0;
+}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html { scroll-behavior: smooth; }
-    body { background: var(--white); }
+html { scroll-behavior: smooth; }
+body { background: var(--white); }
 
-    .salles-page { position: relative; min-height: 100vh; overflow-x: hidden; }
+.salles-page { position: relative; min-height: 100vh; overflow-x: hidden; }
 
-    /* Fond avec motif pixel */
-    .salles-page::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 0;
-      background-image:
-        radial-gradient(circle at 80% 10%, rgba(0,229,204,.07) 0%, transparent 50%),
-        radial-gradient(circle at 10% 90%, rgba(0,229,204,.05) 0%, transparent 40%);
-      pointer-events: none;
-    }
+/* Fond avec motif pixel */
+.salles-page::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    radial-gradient(circle at 80% 10%, rgba(0,229,204,.07) 0%, transparent 50%),
+    radial-gradient(circle at 10% 90%, rgba(0,229,204,.05) 0%, transparent 40%);
+  pointer-events: none;
+}
 
-    /* ── Header ── */
-    .page-header {
-      position: relative; z-index: 1;
-      text-align: left;
-      padding: 5rem 3rem 2rem;
-      max-width: 960px; margin: 0 auto;
-      border-bottom: 1px dashed rgba(0,229,204,.3);
-    }
-    .page-header-label {
-      font-family: 'Space Mono', monospace;
-      font-size: .7rem; font-weight: 700;
-      letter-spacing: .2em; text-transform: uppercase;
-      color: var(--cyan-dark);
-      display: flex; align-items: center; gap: .5rem;
-      margin-bottom: 1rem;
-    }
-    .page-header-label::before {
-      content: '';
-      display: inline-block; width: 8px; height: 8px;
-      background: var(--cyan); border-radius: 50%;
-    }
-    .page-header h1 {
-      font-family: 'Space Mono', monospace;
-      font-size: clamp(2.2rem, 6vw, 4rem);
-      font-weight: 700; line-height: 1;
-      color: var(--ink);
-      letter-spacing: -.03em;
-      margin-bottom: .8rem;
-    }
-    .page-header h1 span { color: var(--cyan); }
-    .page-header p {
-      font-size: 1rem; color: #666;
-      max-width: 500px; line-height: 1.6;
-    }
+/* ── Header ── */
+.page-header {
+  position: relative; z-index: 1;
+  text-align: left;
+  padding: 5rem 3rem 2rem;
+  max-width: 960px; margin: 0 auto;
+  border-bottom: 1px dashed rgba(0,229,204,.3);
+}
+.page-header-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .7rem; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--cyan-dark);
+  display: flex; align-items: center; gap: .5rem;
+  margin-bottom: 1rem;
+}
+.page-header-label::before {
+  content: '';
+  display: inline-block; width: 8px; height: 8px;
+  background: var(--cyan); border-radius: 50%;
+}
+.page-header h1 {
+  font-family: 'CutePixel', 'Space Mono', monospace; /* CutePixel appliqué ici */
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 700; line-height: 1;
+  color: var(--ink);
+  letter-spacing: -.03em;
+  margin-bottom: .8rem;
+}
+.page-header h1 span { color: var(--cyan); }
+.page-header p {
+  font-size: 1rem; color: #666;
+  max-width: 500px; line-height: 1.6;
+}
 
-    /* ── Grid salles ── */
-    .salles-list {
-      position: relative; z-index: 1;
-      padding: 3rem;
-      max-width: 960px; margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-      gap: 1.5rem;
-    }
+/* ── Grid salles ── */
+.salles-list {
+  position: relative; z-index: 1;
+  padding: 3rem;
+  max-width: 960px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 1.5rem;
+}
 
-    /* ── Carte salle style affiche ── */
-    .salle-card {
-      background: var(--white);
-      border: 1px solid #e0e0e0;
-      border-radius: 0;
-      padding: 2rem;
-      position: relative;
-      transition: border-color .2s, box-shadow .2s;
-      /* Effet crochet angulaire inspiré de l'affiche */
-      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
-    }
-    .salle-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0;
-      width: 28px; height: 28px;
-      border-top: 2px solid var(--cyan);
-      border-left: 2px solid var(--cyan);
-    }
-    .salle-card::after {
-      content: '';
-      position: absolute; bottom: 0; right: 0;
-      width: 28px; height: 28px;
-      border-bottom: 2px solid var(--cyan);
-      border-right: 2px solid var(--cyan);
-    }
-    .salle-card:hover {
-      border-color: var(--cyan);
-      box-shadow: 4px 4px 0 var(--cyan-light);
-    }
+/* ── Carte salle style affiche ── */
+.salle-card {
+  background: var(--white);
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  padding: 2rem;
+  position: relative;
+  transition: border-color .2s, box-shadow .2s;
+  /* Effet crochet angulaire inspiré de l'affiche */
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+.salle-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 28px; height: 28px;
+  border-top: 2px solid var(--cyan);
+  border-left: 2px solid var(--cyan);
+}
+.salle-card::after {
+  content: '';
+  position: absolute; bottom: 0; right: 0;
+  width: 28px; height: 28px;
+  border-bottom: 2px solid var(--cyan);
+  border-right: 2px solid var(--cyan);
+}
+.salle-card:hover {
+  border-color: var(--cyan);
+  box-shadow: 4px 4px 0 var(--cyan-light);
+}
 
-    /* Numéro de salle style glitch */
-    .salle-numero {
-      font-family: 'Space Mono', monospace;
-      font-size: 3.5rem; font-weight: 700;
-      color: var(--cyan-light);
-      line-height: 1;
-      margin-bottom: .5rem;
-      position: relative;
-      display: inline-block;
-      user-select: none;
-    }
-    .salle-numero::after {
-      content: attr(data-num);
-      position: absolute; top: 2px; left: 2px;
-      color: rgba(0,229,204,.2);
-      z-index: -1;
-    }
-    .salle-tag {
-      font-family: 'Space Mono', monospace;
-      font-size: .65rem; font-weight: 700;
-      letter-spacing: .12em; text-transform: uppercase;
-      color: var(--cyan-dark);
-      border: 1px solid var(--cyan);
-      padding: .2rem .6rem;
-      border-radius: 0;
-      margin-bottom: 1rem;
-      display: inline-block;
-    }
-    .salle-card h2 {
-      font-family: 'Space Mono', monospace;
-      font-size: 1rem; font-weight: 700;
-      color: var(--ink);
-      margin-bottom: .35rem;
-      line-height: 1.4;
-    }
-    .salle-card .subtitle {
-      font-size: .82rem; font-style: italic;
-      color: #888; margin-bottom: 1rem;
-      padding-left: .8rem;
-      border-left: 2px solid var(--cyan);
-    }
-    .salle-card > p {
-      font-size: .88rem; line-height: 1.75; color: #444;
-      margin-bottom: 1.5rem;
-    }
-    .programme-label {
-      font-family: 'Space Mono', monospace;
-      font-size: .68rem; font-weight: 700;
-      letter-spacing: .12em; text-transform: uppercase;
-      color: #999; margin-bottom: .75rem;
-    }
-    .programme-grid {
-      display: flex; flex-direction: column; gap: .35rem;
-      margin-bottom: 1.5rem;
-    }
-    .programme-item {
-      display: flex; align-items: flex-start; gap: .6rem;
-      font-size: .82rem; color: #333; line-height: 1.4;
-    }
-    .programme-item::before {
-      content: '›';
-      font-family: 'Space Mono', monospace;
-      color: var(--cyan-dark);
-      font-weight: 700; flex-shrink: 0;
-      margin-top: .05rem;
-    }
+/* Numéro de salle style glitch */
+.salle-numero {
+  font-family: 'CutePixel', monospace; /* CutePixel appliqué sur les numéros */
+  font-size: 4rem; font-weight: 700;
+  color: var(--cyan-light);
+  line-height: 1;
+  margin-bottom: .5rem;
+  position: relative;
+  display: inline-block;
+  user-select: none;
+}
+.salle-numero::after {
+  content: attr(data-num);
+  position: absolute; top: 2px; left: 2px;
+  color: rgba(0,229,204,.2);
+  z-index: -1;
+}
+.salle-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--cyan-dark);
+  border: 1px solid var(--cyan);
+  padding: .2rem .6rem;
+  border-radius: 0;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+.salle-card h2 {
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem; font-weight: 700;
+  color: var(--ink);
+  margin-bottom: .35rem;
+  line-height: 1.4;
+}
+.salle-card .subtitle {
+  font-size: .82rem; font-style: italic;
+  color: #888; margin-bottom: 1rem;
+  padding-left: .8rem;
+  border-left: 2px solid var(--cyan);
+}
+.salle-card > p {
+  font-size: .88rem; line-height: 1.75; color: #444;
+  margin-bottom: 1.5rem;
+}
+.programme-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .68rem; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: #999; margin-bottom: .75rem;
+}
+.programme-grid {
+  display: flex; flex-direction: column; gap: .35rem;
+  margin-bottom: 1.5rem;
+}
+.programme-item {
+  display: flex; align-items: flex-start; gap: .6rem;
+  font-size: .82rem; color: #333; line-height: 1.4;
+}
+.programme-item::before {
+  content: '›';
+  font-family: 'Space Mono', monospace;
+  color: var(--cyan-dark);
+  font-weight: 700; flex-shrink: 0;
+  margin-top: .05rem;
+}
 
-    /* Bouton réserver style affiche */
-    .btn-reserver {
-      display: inline-flex; align-items: center; gap: .5rem;
-      font-family: 'Space Mono', monospace;
-      font-size: .75rem; font-weight: 700;
-      letter-spacing: .06em; text-transform: uppercase;
-      color: var(--ink);
-      text-decoration: none;
-      border-bottom: 2px solid var(--cyan);
-      padding-bottom: .2rem;
-      transition: color .2s, border-color .2s;
-    }
-    .btn-reserver::after { content: '→'; }
-    .btn-reserver:hover { color: var(--cyan-dark); border-color: var(--ink); }
+/* Bouton réserver style affiche */
+.btn-reserver {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 2px solid var(--cyan);
+  padding-bottom: .2rem;
+  transition: color .2s, border-color .2s;
+}
+.btn-reserver::after { content: '→'; }
+.btn-reserver:hover { color: var(--cyan-dark); border-color: var(--ink); }
 
-    /* ── CTA band ── */
-    .cta-band {
-      position: relative; z-index: 1;
-      background: var(--ink);
-      text-align: center;
-      padding: 5rem 2rem;
-      margin-top: 0;
-      overflow: hidden;
-    }
-    .cta-band::before {
-      content: 'E-LLUSION';
-      position: absolute;
-      font-family: 'Space Mono', monospace;
-      font-size: 10rem; font-weight: 700;
-      color: rgba(255,255,255,.03);
-      top: 50%; left: 50%;
-      transform: translate(-50%,-50%);
-      white-space: nowrap; pointer-events: none;
-    }
-    .cta-band h2 {
-      font-family: 'Space Mono', monospace;
-      font-size: 1.6rem; font-weight: 700;
-      color: var(--white); margin-bottom: .5rem;
-    }
-    .cta-band p { font-size: .9rem; color: #888; margin-bottom: 2rem; }
-    .cta-band .btn-primary {
-      display: inline-block;
-      background: var(--cyan);
-      color: var(--ink);
-      font-family: 'Space Mono', monospace;
-      font-size: .8rem; font-weight: 700;
-      letter-spacing: .06em; text-transform: uppercase;
-      padding: .85rem 2rem;
-      text-decoration: none;
-      border-radius: 0;
-      border: 2px solid var(--cyan);
-      transition: background .2s, color .2s;
-      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
-    }
-    .cta-band .btn-primary:hover {
-      background: transparent;
-      color: var(--cyan);
-    }
+/* ── CTA band ── */
+.cta-band {
+  position: relative; z-index: 1;
+  background: var(--ink);
+  text-align: center;
+  padding: 5rem 2rem;
+  margin-top: 0;
+  overflow: hidden;
+}
+.cta-band::before {
+  content: 'E-LLUSION';
+  position: absolute;
+  font-family: 'CutePixel', monospace; /* CutePixel pour le fond filigrane */
+  font-size: 11rem; font-weight: 700;
+  color: rgba(255,255,255,.03);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  white-space: nowrap; pointer-events: none;
+}
+.cta-band h2 {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.6rem; font-weight: 700;
+  color: var(--white); margin-bottom: .5rem;
+}
+.cta-band p { font-size: .9rem; color: #888; margin-bottom: 2rem; }
+.cta-band .btn-primary {
+  display: inline-block;
+  background: var(--cyan);
+  color: var(--ink);
+  font-family: 'Space Mono', monospace;
+  font-size: .8rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: .85rem 2rem;
+  text-decoration: none;
+  border-radius: 0;
+  border: 2px solid var(--cyan);
+  transition: background .2s, color .2s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+.cta-band .btn-primary:hover {
+  background: transparent;
+  color: var(--cyan);
+}
 
-    /* Ligne décorative pointillée entre les sections */
-    .dot-divider {
-      position: relative; z-index: 1;
-      height: 1px;
-      background: repeating-linear-gradient(to right, var(--cyan) 0, var(--cyan) 4px, transparent 4px, transparent 12px);
-      margin: 0 3rem;
-      opacity: .25;
-    }
-    /* ── INSCRIPTION ── */
-    #inscription { background: var(--white); }
-    .form-wrapper {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 2rem 4rem;
-    }
-    .form-card {
-      background: var(--white);
-      border: 1px solid #ddd;
-      border-radius: 16px;
-      padding: 2.5rem;
-    }
-    .form-section-title {
-      font-size: 1.05rem; font-weight: 700;
-      margin-bottom: 1.2rem; color: var(--black);
-    }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-    .form-group { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1rem; }
-    .form-group label { font-size: .85rem; font-weight: 600; }
-    .form-group input, .form-group select {
-      border: 1.5px solid #ddd; border-radius: 8px;
-      padding: .65rem .9rem;
-      font-family: 'DM Sans', sans-serif;
-      font-size: .9rem; color: var(--text);
-      outline: none; transition: border-color .2s;
-      background: var(--white);
-    }
-    .form-group input:focus, .form-group select:focus { border-color: var(--mint-dark); }
-    .day-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: .75rem;
-    }
-    .day-btn {
-      border: 1.5px solid #ddd; border-radius: 8px;
-      padding: .75rem; text-align: center;
-      font-family: 'DM Sans', sans-serif; font-size: .88rem;
-      cursor: pointer; background: var(--white); transition: all .2s;
-    }
-    .day-btn.selected { border-color: var(--mint-dark); background: var(--mint); font-weight: 600; }
-    .day-btn:hover { border-color: var(--mint-dark); }
-    .info-box {
-      background: #fffbeb; border: 1px solid #f0d060;
-      border-radius: 10px; padding: 1rem 1.2rem;
-      font-size: .83rem; line-height: 1.8; color: #555;
-      margin-bottom: 1.5rem;
-    }
-    .info-box strong { color: #333; display: block; margin-bottom: .3rem; }
-    .form-divider { border: none; border-top: 1px solid #eee; margin: 1.5rem 0; }
-    .btn-submit {
-      width: 100%; padding: 1rem;
-      background: var(--mint-dark); border: none; border-radius: 999px;
-      font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 700;
-      color: var(--black); cursor: pointer; transition: background .2s;
-    }
-    .btn-submit:hover { background: #5cd3c5; }
-    .contact-hint {
-      text-align: center; font-size: .82rem; color: #666; margin-top: 1rem;
-    }
-    .contact-hint a { color: #2bb5a0; }
+/* Ligne décorative pointillée entre les sections */
+.dot-divider {
+  position: relative; z-index: 1;
+  height: 1px;
+  background: repeating-linear-gradient(to right, var(--cyan) 0, var(--cyan) 4px, transparent 4px, transparent 12px);
+  margin: 0 3rem;
+  opacity: .25;
+}
 
-    /* ── CONTACT ── */
-    #contact { background: var(--white); }
-    .contact-grid {
-      max-width: 820px; margin: 0 auto;
-      padding: 0 2rem 4rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 1.5rem;
-    }
-    .contact-card {
-      background: var(--white); border: 1px solid #e5e5e5;
-      border-radius: 16px; padding: 2rem;
-    }
-    .contact-card.mint { background: var(--mint); border-color: transparent; }
-    .contact-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.2rem; }
-    .contact-item { display: flex; align-items: flex-start; gap: .9rem; margin-bottom: 1.2rem; }
-    .contact-icon {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: var(--mint-dark); display: flex; align-items: center;
-      justify-content: center; flex-shrink: 0; font-size: .9rem;
-    }
-    .contact-item h4 { font-size: .88rem; font-weight: 600; }
-    .contact-item p, .contact-item a {
-      font-size: .85rem; color: #444; line-height: 1.5; text-decoration: none;
-    }
-    .contact-item a { color: #2bb5a0; }
-    .faq-card {
-      grid-column: 1 / -1;
-      background: var(--white); border: 1px solid #e5e5e5;
-      border-radius: 16px; padding: 2rem;
-    }
-    .faq-item { margin-bottom: 1.5rem; }
-    .faq-item h4 { font-size: .95rem; font-weight: 700; margin-bottom: .3rem; }
-    .faq-item p { font-size: .88rem; color: #555; line-height: 1.6; }
+/* ── INSCRIPTION ── */
+#inscription { background: var(--white); }
+.form-wrapper {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+.form-card {
+  background: var(--white);
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  padding: 2.5rem;
+}
+.form-section-title {
+  font-size: 1.05rem; font-weight: 700;
+  margin-bottom: 1.2rem; color: var(--ink);
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.form-group { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1rem; }
+.form-group label { font-size: .85rem; font-weight: 600; }
+.form-group input, .form-group select {
+  border: 1.5px solid #ddd; border-radius: 8px;
+  padding: .65rem .9rem;
+  font-family: 'Space Mono', sans-serif;
+  font-size: .9rem; color: var(--ink);
+  outline: none; transition: border-color .2s;
+  background: var(--white);
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--cyan); }
+.day-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: .75rem;
+}
+.day-btn {
+  border: 1.5px solid #ddd; border-radius: 8px;
+  padding: .75rem; text-align: center;
+  font-family: 'Space Mono', sans-serif; font-size: .88rem;
+  cursor: pointer; background: var(--white); transition: all .2s;
+}
+.day-btn.selected { border-color: var(--cyan-dark); background: var(--cyan-light); font-weight: 600; }
+.day-btn:hover { border-color: var(--cyan-dark); }
+.info-box {
+  background: #fffbeb; border: 1px solid #f0d060;
+  border-radius: 10px; padding: 1rem 1.2rem;
+  font-size: .83rem; line-height: 1.8; color: #555;
+  margin-bottom: 1.5rem;
+}
+.info-box strong { color: #333; display: block; margin-bottom: .3rem; }
+.form-divider { border: none; border-top: 1px solid #eee; margin: 1.5rem 0; }
+.btn-submit {
+  width: 100%; padding: 1rem;
+  background: var(--cyan); border: none; border-radius: 0;
+  font-family: 'Space Mono', sans-serif; font-size: 1rem; font-weight: 700;
+  color: var(--ink); cursor: pointer; transition: background .2s;
+}
+.btn-submit:hover { background: var(--cyan-dark); }
+.contact-hint {
+  text-align: center; font-size: .82rem; color: #666; margin-top: 1rem;
+}
+.contact-hint a { color: #2bb5a0; }
 
-    /* ── FOOTER ── */
-    footer {
-      background: var(--white); border-top: 1px solid #eee;
-      padding: 1.5rem 2rem;
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 1rem;
-      font-size: .8rem; color: #777;
-    }
-    footer a { color: #777; text-decoration: none; }
-    footer a:hover { color: var(--text); }
+/* ── CONTACT ── */
+#contact { background: var(--white); }
+.contact-grid {
+  max-width: 820px; margin: 0 auto;
+  padding: 0 2rem 4rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+.contact-card {
+  background: var(--white); border: 1px solid #e5e5e5;
+  border-radius: 16px; padding: 2rem;
+}
+.contact-card.mint { background: var(--cyan-light); border-color: transparent; }
+.contact-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.2rem; }
+.contact-item { display: flex; align-items: flex-start; gap: .9rem; margin-bottom: 1.2rem; }
+.contact-icon {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--cyan); display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; font-size: .9rem;
+}
+.contact-item h4 { font-size: .88rem; font-weight: 600; }
+.contact-item p, .contact-item a {
+  font-size: .85rem; color: #444; line-height: 1.5; text-decoration: none;
+}
+.contact-item a { color: #2bb5a0; }
+.faq-card {
+  grid-column: 1 / -1;
+  background: var(--white); border: 1px solid #e5e5e5;
+  border-radius: 16px; padding: 2rem;
+}
+.faq-item { margin-bottom: 1.5rem; }
+.faq-item h4 { font-size: .95rem; font-weight: 700; margin-bottom: .3rem; }
+.faq-item p { font-size: .88rem; color: #555; line-height: 1.6; }
 
-    /* ── SUCCESS ── */
-    .success-banner {
-      display: none;
-      background: #d4f5ee; border: 1px solid var(--mint-dark);
-      border-radius: 10px; padding: 1rem 1.4rem;
-      font-size: .9rem; font-weight: 600; color: #1a7a6e;
-      margin-bottom: 1.5rem; text-align: center;
-    }
+/* ── FOOTER ── */
+footer {
+  background: var(--white); border-top: 1px solid #eee;
+  padding: 1.5rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+  font-size: .8rem; color: #777;
+}
+footer a { color: #777; text-decoration: none; }
+footer a:hover { color: var(--ink); }
 
-    @media (max-width: 600px) {
-      .form-row { grid-template-columns: 1fr; }
-      .nav-links { gap: 1rem; }
-      nav { padding: 0 1rem; }
-    }
+/* ── SUCCESS ── */
+.success-banner {
+  display: none;
+  background: #d4f5ee; border: 1px solid var(--cyan-dark);
+  border-radius: 10px; padding: 1rem 1.4rem;
+  font-size: .9rem; font-weight: 600; color: #1a7a6e;
+  margin-bottom: 1.5rem; text-align: center;
+}
+
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; }
+  .nav-links { gap: 1rem; }
+  nav { padding: 0 1rem; }
+}
+
 /* ==========================================
    NIVEAU SUPÉRIEUR : CARROUSEL & ANIMATIONS
    ========================================== */
-
-/* 1. Ajustement des boutons transformés en liens (a) */
 .btn-primary, .btn-outline {
   display: inline-block;
   text-decoration: none;
   text-align: center;
 }
 
-/* 2. Structure du carrousel en arrière-plan */
 .hero {
   position: relative;
   overflow: hidden;
@@ -416,7 +424,7 @@
   100%       { transform: translateX(0); }
 }
 
-/* 3. Animations d'apparition progressive (Fade In Up) */
+/* Animations d'apparition progressive */
 .hero-title, .hero-sub, .hero-buttons, .hero-meta {
   opacity: 0;
   animation: fadeInUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
@@ -428,51 +436,41 @@
 .hero-meta  { animation-delay: 0.8s; }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(25px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* 4. Effets "Magnifiques" sur les cartes d'exploration */
+/* Effets sur les cartes d'exploration */
 .cards .card {
   text-decoration: none;
   color: inherit;
   display: block;
   border: 1px solid transparent;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              box-shadow 0.4s ease, 
-              border-color 0.4s ease;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
-/* Élévation au survol de la carte */
 .cards .card:hover {
   transform: translateY(-8px);
-  border-color: var(--mint-dark);
+  border-color: var(--cyan-dark);
   box-shadow: 0 12px 30px rgba(17, 17, 17, 0.12);
 }
 
-/* Animation de la pastille (dot) dans la carte */
 .card-dot {
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
 .card:hover .card-dot {
   transform: scale(1.2);
-  background-color: var(--accent); /* Devient rouge accent au survol */
+  background-color: var(--cyan);
   animation: pulseDot 1.5s infinite ease-in-out alternate;
 }
 
 @keyframes pulseDot {
-  0% { box-shadow: 0 0 0 0 rgba(220, 48, 42, 0.4); }
-  100% { box-shadow: 0 0 0 10px rgba(220, 48, 42, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(0, 229, 204, 0.4); }
+  100% { box-shadow: 0 0 0 10px rgba(0, 229, 204, 0); }
 }
 
-/* ── FOND PAGE SALLES ── */
+/* Fond global pages */
 body {
   background-image: url("./Image_fond/Style_1/fond_bleu_fonce1.png");
   background-attachment: fixed;
@@ -482,51 +480,16 @@ body {
   min-height: 100vh;
 }
 
-.salles-page {
-  position: relative;
-  min-height: 100vh;
-}
-
-/* Assure que le contenu passe devant */
-.page-header,
-.salles-list,
-.cta-band {
+.page-header, .salles-list, .cta-band {
   position: relative;
   z-index: 1;
 }
 
-/* ==================================================
-   Styles moved from salles.php (inline <style>)
-   Kept here to centralize presentation rules for the Salles page
-   ================================================== */
-
-/* ── Variables affiche ── */
-:root {
-  --cyan: #00e5cc;
-  --cyan-dark: #00b8a0;
-  --cyan-light: #e0faf7;
-  --ink: #0a0a0a;
-  --ink-soft: #1a1a2e;
-  --white: #ffffff;
-  --off: #f5f5f0;
-}
-
-/* Page salles additions (scoped to .salles-page) */
-.salles-page { position: relative; min-height: 100vh; overflow-x: hidden; }
-
-.salles-page::before {
-  content: '';
-  position: fixed; inset: 0; z-index: 0;
-  background-image:
-    radial-gradient(circle at 80% 10%, rgba(0,229,204,.07) 0%, transparent 50%),
-    radial-gradient(circle at 10% 90%, rgba(0,229,204,.05) 0%, transparent 40%);
-  pointer-events: none;
-}
-
+/* Page salles additions */
 .salles-page .page-header { position: relative; z-index: 1; text-align: left; padding: 5rem 3rem 2rem; max-width: 960px; margin: 0 auto; border-bottom: 1px dashed rgba(0,229,204,.3); }
 .salles-page .page-header-label { font-family: 'Space Mono', monospace; font-size: .7rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--cyan-dark); display: flex; align-items: center; gap: .5rem; margin-bottom: 1rem; }
 .salles-page .page-header-label::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--cyan); border-radius: 50%; }
-.salles-page .page-header h1 { font-family: 'Space Mono', monospace; font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 700; line-height: 1; color: var(--ink); letter-spacing: -.03em; margin-bottom: .8rem; }
+.salles-page .page-header h1 { font-family: 'CutePixel', 'Space Mono', monospace; font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 700; line-height: 1; color: var(--ink); letter-spacing: -.03em; margin-bottom: .8rem; }
 .salles-page .page-header h1 span { color: var(--cyan); }
 .salles-page .page-header p { font-size: 1rem; color: #666; max-width: 500px; line-height: 1.6; }
 
@@ -537,7 +500,7 @@ body {
 .salles-page .salle-card::after { content: ''; position: absolute; bottom: 0; right: 0; width: 28px; height: 28px; border-bottom: 2px solid var(--cyan); border-right: 2px solid var(--cyan); }
 .salles-page .salle-card:hover { border-color: var(--cyan); box-shadow: 4px 4px 0 var(--cyan-light); }
 
-.salles-page .salle-numero { font-family: 'Space Mono', monospace; font-size: 3.5rem; font-weight: 700; color: var(--cyan-light); line-height: 1; margin-bottom: .5rem; position: relative; display: inline-block; user-select: none; }
+.salles-page .salle-numero { font-family: 'CutePixel', monospace; font-size: 4rem; font-weight: 700; color: var(--cyan-light); line-height: 1; margin-bottom: .5rem; position: relative; display: inline-block; user-select: none; }
 .salles-page .salle-numero::after { content: attr(data-num); position: absolute; top: 2px; left: 2px; color: rgba(0,229,204,.2); z-index: -1; }
 .salles-page .salle-tag { font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--cyan-dark); border: 1px solid var(--cyan); padding: .2rem .6rem; border-radius: 0; margin-bottom: 1rem; display: inline-block; }
 .salles-page .salle-card h2 { font-family: 'Space Mono', monospace; font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: .35rem; line-height: 1.4; }
@@ -553,13 +516,14 @@ body {
 .salles-page .btn-reserver:hover { color: var(--cyan-dark); border-color: var(--ink); }
 
 .salles-page .cta-band { position: relative; z-index: 1; background: var(--ink); text-align: center; padding: 5rem 2rem; margin-top: 0; overflow: hidden; }
-.salles-page .cta-band::before { content: 'E-LLUSION'; position: absolute; font-family: 'Space Mono', monospace; font-size: 10rem; font-weight: 700; color: rgba(255,255,255,.03); top: 50%; left: 50%; transform: translate(-50%,-50%); white-space: nowrap; pointer-events: none; }
+.salles-page .cta-band::before { content: 'E-LLUSION'; position: absolute; font-family: 'CutePixel', monospace; font-size: 11rem; font-weight: 700; color: rgba(255,255,255,.03); top: 50%; left: 50%; transform: translate(-50%,-50%); white-space: nowrap; pointer-events: none; }
 .salles-page .cta-band h2 { font-family: 'Space Mono', monospace; font-size: 1.6rem; font-weight: 700; color: var(--white); margin-bottom: .5rem; }
 .salles-page .cta-band p { font-size: .9rem; color: #888; margin-bottom: 2rem; }
 .salles-page .cta-band .btn-primary { display: inline-block; background: var(--cyan); color: var(--ink); font-family: 'Space Mono', monospace; font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: .85rem 2rem; text-decoration: none; border-radius: 0; border: 2px solid var(--cyan); transition: background .2s, color .2s; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); }
 .salles-page .cta-band .btn-primary:hover { background: transparent; color: var(--cyan); }
 
 .salles-page .dot-divider { position: relative; z-index: 1; height: 1px; background: repeating-linear-gradient(to right, var(--cyan) 0, var(--cyan) 4px, transparent 4px, transparent 12px); margin: 0 3rem; opacity: .25; }
+
 /* ==========================================
    ── ACCUEIL SPECIFIQUE (index.php) ──
    ========================================== */
@@ -591,10 +555,9 @@ body {
 }
 
 .hero-title {
-  font-family: 'Space Mono', monospace;
-  font-size: clamp(3rem, 8vw, 6rem);
+  font-family: 'CutePixel', 'Space Mono', monospace; /* CutePixel sur le gros titre de l'index */
+  font-size: clamp(3.5rem, 9vw, 6.5rem);
   font-weight: 700;
-  color: var(--ink);
   line-height: 1;
   letter-spacing: -0.05em;
   margin-bottom: 1.5rem;
@@ -784,8 +747,8 @@ body {
 .target-box .corner.br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
 
 .visual-text {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.7rem;
+  font-family: 'CutePixel', monospace; /* CutePixel appliqué sur les tags d'interface technique */
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--cyan-dark);
   letter-spacing: 0.05em;
@@ -835,6 +798,7 @@ body {
   .section-title::after { left: 50%; transform: translateX(-50%); }
   .hero-buttons { flex-direction: column; width: 100%; max-width: 260px; gap: 1rem; }
 }
+
 /* ==========================================
    ── NAVIGATION (nav.php) ──
    ========================================== */
@@ -857,12 +821,12 @@ body {
 }
 
 .nav-logo {
-  font-family: 'Space Mono', monospace;
-  font-size: 1.8rem;
+  font-family: 'CutePixel', 'Space Mono', monospace; /* Logo en CutePixel pour rappeler le pixel art */
+  font-size: 2.1rem;
   font-weight: 700;
   color: var(--ink);
   text-decoration: none;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.02em;
   position: relative;
   transition: color 0.3s ease;
 }
@@ -919,7 +883,7 @@ body {
 @media (max-width: 768px) {
   .main-nav { padding: 1rem; }
   .nav-links { gap: 1rem; }
-  .nav-logo { font-size: 1.2rem; }
+  .nav-logo { font-size: 1.6rem; }
   .nav-item { font-size: 0.75rem; }
 }
 
@@ -954,12 +918,12 @@ body {
 }
 
 .footer-title {
-  font-family: 'Space Mono', monospace;
-  font-size: 2.5rem;
+  font-family: 'CutePixel', 'Space Mono', monospace; /* Rappel CutePixel dans le pied de page */
+  font-size: 2.8rem;
   font-weight: 700;
   color: var(--ink);
   margin-bottom: 0.5rem;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.02em;
 }
 
 .footer-subtitle {
@@ -1070,3 +1034,74 @@ body {
 @media (max-width: 768px) {
   .location-section { border-left: none; padding-left: 0; }
 }
+       /* Styles spécifiques pour organiser le texte juridique proprement */
+        .legal-container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 2rem 6rem;
+        }
+
+        .legal-card {
+            background: var(--white);
+            border: 1px solid #e0e0e0;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+            position: relative;
+        }
+
+        /* Effet de coins de l'affiche */
+        .legal-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 28px; height: 28px;
+            border-top: 2px solid var(--cyan); border-left: 2px solid var(--cyan);
+        }
+        .legal-card::after {
+            content: ''; position: absolute; bottom: 0; right: 0; width: 28px; height: 28px;
+            border-bottom: 2px solid var(--cyan); border-right: 2px solid var(--cyan);
+        }
+
+        .legal-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .legal-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .legal-section h2 {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--ink);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px dashed rgba(0, 229, 204, 0.3);
+        }
+
+        .legal-section p {
+            font-size: 0.92rem;
+            line-height: 1.75;
+            color: #444;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .legal-section ul {
+            margin-bottom: 1rem;
+            padding-left: 1.2rem;
+        }
+
+        .legal-section li {
+            font-size: 0.92rem;
+            line-height: 1.6;
+            color: #444;
+            margin-bottom: 0.5rem;
+        }
+
+        .legal-section strong {
+            color: var(--ink);
+        }
