@@ -835,3 +835,238 @@ body {
   .section-title::after { left: 50%; transform: translateX(-50%); }
   .hero-buttons { flex-direction: column; width: 100%; max-width: 260px; gap: 1rem; }
 }
+/* ==========================================
+   ── NAVIGATION (nav.php) ──
+   ========================================== */
+.main-nav {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px dashed rgba(0, 229, 204, 0.4);
+  padding: 1.2rem 3rem;
+}
+
+.nav-container {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: -0.05em;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+/* Animation Glitch au survol du logo */
+.nav-logo:hover {
+  color: var(--cyan-dark);
+  animation: glitch-anim 0.3s infinite alternate;
+}
+
+@keyframes glitch-anim {
+  0% { transform: translate(0) skew(0deg); text-shadow: 2px 0 var(--cyan); }
+  20% { transform: translate(-2px, 1px) skew(-2deg); text-shadow: -2px 0 var(--ink); }
+  40% { transform: translate(2px, -1px) skew(2deg); text-shadow: 2px 0 var(--cyan-light); }
+  60% { transform: translate(-1px, 2px) skew(-1deg); text-shadow: -2px 0 var(--cyan); }
+  80% { transform: translate(1px, -2px) skew(1deg); text-shadow: 2px 0 var(--ink); }
+  100% { transform: translate(0) skew(0deg); text-shadow: none; }
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.nav-item {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 0.2rem;
+}
+
+/* Ligne cyan animée sous les liens */
+.nav-item::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--cyan);
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.nav-item:hover::after {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .main-nav { padding: 1rem; }
+  .nav-links { gap: 1rem; }
+  .nav-logo { font-size: 1.2rem; }
+  .nav-item { font-size: 0.75rem; }
+}
+
+/* ==========================================
+   ── FOOTER (footer.php) ──
+   ========================================== */
+.main-footer {
+  background: var(--white);
+  position: relative;
+  padding: 4rem 3rem 1.5rem;
+  overflow: hidden;
+  border-top: 2px solid var(--ink);
+}
+
+/* Coins cyan style affiche en haut à gauche */
+.main-footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 40px; height: 40px;
+  border-top: 3px solid var(--cyan);
+  border-left: 3px solid var(--cyan);
+}
+
+.footer-grid {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.footer-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.05em;
+}
+
+.footer-subtitle {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--cyan-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+}
+
+/* Effet crochet [ ] autour de la date */
+.date-bracket-container {
+  display: inline-block;
+  padding: 1rem 1.5rem;
+  position: relative;
+  font-family: 'Space Mono', monospace;
+}
+
+.date-bracket-container::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 15px; height: 100%;
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  border-left: 2px solid var(--ink);
+}
+
+.date-bracket-container::after {
+  content: '';
+  position: absolute;
+  bottom: -10px; right: -20px;
+  width: 40px; height: 10px;
+  background: var(--cyan);
+  opacity: 0.8;
+}
+
+.date-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.date-text .highlight {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.location-section {
+  border-left: 2px dashed rgba(0, 229, 204, 0.4);
+  padding-left: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.location-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.2rem;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.logo-placeholder {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: var(--ink);
+  color: var(--white);
+  padding: 0.3rem 0.6rem;
+  margin-right: 0.5rem;
+  margin-top: 2rem;
+}
+
+.links-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.footer-link {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  color: #666;
+  text-decoration: none;
+  transition: color 0.3s, transform 0.3s;
+  display: inline-block;
+}
+
+.footer-link:hover {
+  color: var(--cyan-dark);
+  transform: translateX(5px);
+}
+
+.footer-bottom {
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: #999;
+}
+
+@media (max-width: 768px) {
+  .location-section { border-left: none; padding-left: 0; }
+}
