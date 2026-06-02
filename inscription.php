@@ -161,7 +161,7 @@ $creneaux_json   = json_encode($creneaux_data, JSON_HEX_TAG | JSON_HEX_APOS | JS
     <h1>INSCRIPTION</h1>
     <p>Réservez votre créneau pour l'exposition E-LLUSION</p>
   </div>
-
+  
 
   <div class="form-wrapper">
     <div class="form-card">
