@@ -173,16 +173,7 @@
     color: #444;
   }
 
-    /* ── SALLES ── */
-    #salles { background: }
-  body {
-    background-image:
-    url("/Image fond/Style 1/fond_bleu_fonce1.png");
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
-  }
+    /* ── SALLES ── */    
 
   .salles-page {
     position: relative;
@@ -505,14 +496,12 @@
 
 /* ── FOND PAGE SALLES ── */
 body {
-  body {
-  background-image:
-  url("/Image fond\Style/fond_bleu_fonce1.png"),
-}
+  background-image: url("./Image_fond/Style_1/fond_bleu_fonce1.png");
   background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
 }
 
 .salles-page {
