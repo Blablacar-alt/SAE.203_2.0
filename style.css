@@ -1,256 +1,241 @@
+    /* ── Variables affiche ── */
     :root {
-      --mint: #b2f0e8;
-      --mint-dark: #7de0d2;
-      --black: #111111;
+      --cyan: #00e5cc;
+      --cyan-dark: #00b8a0;
+      --cyan-light: #e0faf7;
+      --ink: #0a0a0a;
+      --ink-soft: #1a1a2e;
       --white: #ffffff;
-      --grey: #f4f4f4;
-      --text: #222222;
-      --accent: #e0302a;
+      --off: #f5f5f0;
     }
+
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     html { scroll-behavior: smooth; }
-        /* ── SALLES ── */
+    body { background: var(--white); }
 
-      .salles-page {
-        position: relative;
-        min-height: 100vh;
-      }
+    .salles-page { position: relative; min-height: 100vh; overflow-x: hidden; }
 
-      /* Assure que le contenu passe devant */
-      .page-header,
-      .salles-list,
-      .cta-band {
-        position: relative;
-        z-index: 1;
-      }
-        .page-header {
-          text-align: center;
-          padding: 4rem 2rem 2rem;
-        }
-        .page-header h1 {
-          font-family: 'CutePixel', monospace;
-          font-size: clamp(2rem, 6vw, 3.5rem);
-          font-weight: 700; letter-spacing: -.01em;
-        }
-        .page-header p {
-          margin-top: .8rem;
-          font-size: 1rem; color: #555;
-        }
-        .salles-list {
-          padding: 2rem;
-          max-width: 900px;
-          margin: 0 auto;
-          display: flex; flex-direction: column; gap: 2rem;
-        }
-        .salle-card {
-          background: var(--white);
-          border: 1px solid #e0e0e0;
-          border-radius: 16px;
-          padding: 2.5rem;
-        }
-        .salle-tag {
-          display: inline-block;
-          background: var(--mint-dark);
-          color: var(--black);
-          font-size: .75rem; font-weight: 700;
-          padding: .25rem .7rem; border-radius: 999px;
-          margin-bottom: 1rem;
-        }
-        .salle-card h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: .35rem; }
-        .salle-card .subtitle { font-style: italic; color: #666; font-size: .9rem; margin-bottom: 1rem; }
-        .salle-card p { font-size: .92rem; line-height: 1.7; color: #444; margin-bottom: 1.5rem; }
-        .programme-label { font-weight: 600; font-size: .88rem; margin-bottom: .75rem; }
-        .programme-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: .4rem .5rem;
-          margin-bottom: 1.5rem;
-        }
-        .programme-item {
-          display: flex; align-items: center; gap: .5rem;
-          font-size: .85rem; color: #333;
-        }
-        .programme-item::before {
-          content: '';
-          width: 8px; height: 8px; border-radius: 50%;
-          background: var(--mint-dark); flex-shrink: 0;
-        }
-        .btn-reserver {
-          background: none; border: none;
-          color: var(--black); font-family: 'DM Sans', sans-serif;
-          font-size: .9rem; font-weight: 600;
-          cursor: pointer; padding: 0;
-          text-decoration: underline; text-underline-offset: 3px;
-          transition: color .2s;
-        }
-        .btn-reserver:hover { color: #2bb5a0; }
-
-        .cta-band {
-          background: var(--mint);
-          text-align: center;
-          padding: 4rem 2rem;
-          margin-top: 2rem;
-        }
-        .cta-band h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: .5rem; }
-        .cta-band p { font-size: .9rem; color: #444; margin-bottom: 1.5rem; }
-      background: var(--mint);
-      padding: 4rem 2rem;
+    /* Fond avec motif pixel */
+    .salles-page::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        radial-gradient(circle at 80% 10%, rgba(0,229,204,.07) 0%, transparent 50%),
+        radial-gradient(circle at 10% 90%, rgba(0,229,204,.05) 0%, transparent 40%);
+      pointer-events: none;
     }
-    .explorer-label {
-      font-family: 'Space Mono', monospace;
-      font-size: 1rem; font-weight: 700;
-      letter-spacing: .12em; text-transform: uppercase;
-      margin-bottom: 2rem;
-    }
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.5rem;
-      max-width: 860px;
-    }
-    .card {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 2rem;
-      cursor: pointer;
-      transition: box-shadow .2s;
-    }
-    .card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.1); }
-    .card-dot {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: var(--mint-dark);
-      margin-bottom: 1.2rem;
-    }
-    .card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: .5rem; }
-    .card p { font-size: .88rem; color: #555; line-height: 1.5; }
 
-    /* About */
-  .about-section {
-    position: relative;
-    overflow: hidden;
-    padding: 5rem 2rem;
-    text-align: center;
-  }
-
-  .about-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    height: 100%;
-    background-image: url('Image fond/Style 1/fond_bleu_clair1.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 0;
-  }
-
-  .about-section h2 {
-    position: relative;
-    z-index: 1;
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-  }
-
-  .about-section p {
-    position: relative;
-    z-index: 1;
-    max-width: 700px;
-    margin: 0 auto;
-    font-size: .97rem;
-    line-height: 1.8;
-    color: #444;
-  }
-
-    /* ── SALLES ── */
-
-  .salles-page {
-    position: relative;
-    min-height: 100vh;
-  }
-
-  /* Assure que le contenu passe devant */
-  .page-header,
-  .salles-list,
-  .cta-band {
-    position: relative;
-    z-index: 1;
-  }
+    /* ── Header ── */
     .page-header {
-      text-align: center;
-      padding: 4rem 2rem 2rem;
+      position: relative; z-index: 1;
+      text-align: left;
+      padding: 5rem 3rem 2rem;
+      max-width: 960px; margin: 0 auto;
+      border-bottom: 1px dashed rgba(0,229,204,.3);
+    }
+    .page-header-label {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: var(--cyan-dark);
+      display: flex; align-items: center; gap: .5rem;
+      margin-bottom: 1rem;
+    }
+    .page-header-label::before {
+      content: '';
+      display: inline-block; width: 8px; height: 8px;
+      background: var(--cyan); border-radius: 50%;
     }
     .page-header h1 {
-      font-family: 'CutePixel', monospace;
-      font-size: clamp(2rem, 6vw, 3.5rem);
-      font-weight: 700; letter-spacing: -.01em;
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 700; line-height: 1;
+      color: var(--ink);
+      letter-spacing: -.03em;
+      margin-bottom: .8rem;
     }
+    .page-header h1 span { color: var(--cyan); }
     .page-header p {
-      margin-top: .8rem;
-      font-size: 1rem; color: #555;
+      font-size: 1rem; color: #666;
+      max-width: 500px; line-height: 1.6;
     }
+
+    /* ── Grid salles ── */
     .salles-list {
-      padding: 2rem;
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex; flex-direction: column; gap: 2rem;
+      position: relative; z-index: 1;
+      padding: 3rem;
+      max-width: 960px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 1.5rem;
     }
+
+    /* ── Carte salle style affiche ── */
     .salle-card {
       background: var(--white);
       border: 1px solid #e0e0e0;
-      border-radius: 16px;
-      padding: 2.5rem;
+      border-radius: 0;
+      padding: 2rem;
+      position: relative;
+      transition: border-color .2s, box-shadow .2s;
+      /* Effet crochet angulaire inspiré de l'affiche */
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    }
+    .salle-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 28px; height: 28px;
+      border-top: 2px solid var(--cyan);
+      border-left: 2px solid var(--cyan);
+    }
+    .salle-card::after {
+      content: '';
+      position: absolute; bottom: 0; right: 0;
+      width: 28px; height: 28px;
+      border-bottom: 2px solid var(--cyan);
+      border-right: 2px solid var(--cyan);
+    }
+    .salle-card:hover {
+      border-color: var(--cyan);
+      box-shadow: 4px 4px 0 var(--cyan-light);
+    }
+
+    /* Numéro de salle style glitch */
+    .salle-numero {
+      font-family: 'Space Mono', monospace;
+      font-size: 3.5rem; font-weight: 700;
+      color: var(--cyan-light);
+      line-height: 1;
+      margin-bottom: .5rem;
+      position: relative;
+      display: inline-block;
+      user-select: none;
+    }
+    .salle-numero::after {
+      content: attr(data-num);
+      position: absolute; top: 2px; left: 2px;
+      color: rgba(0,229,204,.2);
+      z-index: -1;
     }
     .salle-tag {
-      display: inline-block;
-      background: var(--mint-dark);
-      color: var(--black);
-      font-size: .75rem; font-weight: 700;
-      padding: .25rem .7rem; border-radius: 999px;
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--cyan-dark);
+      border: 1px solid var(--cyan);
+      padding: .2rem .6rem;
+      border-radius: 0;
       margin-bottom: 1rem;
+      display: inline-block;
     }
-    .salle-card h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: .35rem; }
-    .salle-card .subtitle { font-style: italic; color: #666; font-size: .9rem; margin-bottom: 1rem; }
-    .salle-card p { font-size: .92rem; line-height: 1.7; color: #444; margin-bottom: 1.5rem; }
-    .programme-label { font-weight: 600; font-size: .88rem; margin-bottom: .75rem; }
+    .salle-card h2 {
+      font-family: 'Space Mono', monospace;
+      font-size: 1rem; font-weight: 700;
+      color: var(--ink);
+      margin-bottom: .35rem;
+      line-height: 1.4;
+    }
+    .salle-card .subtitle {
+      font-size: .82rem; font-style: italic;
+      color: #888; margin-bottom: 1rem;
+      padding-left: .8rem;
+      border-left: 2px solid var(--cyan);
+    }
+    .salle-card > p {
+      font-size: .88rem; line-height: 1.75; color: #444;
+      margin-bottom: 1.5rem;
+    }
+    .programme-label {
+      font-family: 'Space Mono', monospace;
+      font-size: .68rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: #999; margin-bottom: .75rem;
+    }
     .programme-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: .4rem .5rem;
+      display: flex; flex-direction: column; gap: .35rem;
       margin-bottom: 1.5rem;
     }
     .programme-item {
-      display: flex; align-items: center; gap: .5rem;
-      font-size: .85rem; color: #333;
+      display: flex; align-items: flex-start; gap: .6rem;
+      font-size: .82rem; color: #333; line-height: 1.4;
     }
     .programme-item::before {
-      content: '';
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--mint-dark); flex-shrink: 0;
+      content: '›';
+      font-family: 'Space Mono', monospace;
+      color: var(--cyan-dark);
+      font-weight: 700; flex-shrink: 0;
+      margin-top: .05rem;
     }
-    .btn-reserver {
-      background: none; border: none;
-      color: var(--black); font-family: 'DM Sans', sans-serif;
-      font-size: .9rem; font-weight: 600;
-      cursor: pointer; padding: 0;
-      text-decoration: underline; text-underline-offset: 3px;
-      transition: color .2s;
-    }
-    .btn-reserver:hover { color: #2bb5a0; }
 
-    .cta-band {
-      background: var(--mint);
-      text-align: center;
-      padding: 4rem 2rem;
-      margin-top: 2rem;
+    /* Bouton réserver style affiche */
+    .btn-reserver {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 2px solid var(--cyan);
+      padding-bottom: .2rem;
+      transition: color .2s, border-color .2s;
     }
-    .cta-band h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: .5rem; }
-    .cta-band p { font-size: .9rem; color: #444; margin-bottom: 1.5rem; }
+    .btn-reserver::after { content: '→'; }
+    .btn-reserver:hover { color: var(--cyan-dark); border-color: var(--ink); }
+
+    /* ── CTA band ── */
+    .cta-band {
+      position: relative; z-index: 1;
+      background: var(--ink);
+      text-align: center;
+      padding: 5rem 2rem;
+      margin-top: 0;
+      overflow: hidden;
+    }
+    .cta-band::before {
+      content: 'E-LLUSION';
+      position: absolute;
+      font-family: 'Space Mono', monospace;
+      font-size: 10rem; font-weight: 700;
+      color: rgba(255,255,255,.03);
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      white-space: nowrap; pointer-events: none;
+    }
+    .cta-band h2 {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.6rem; font-weight: 700;
+      color: var(--white); margin-bottom: .5rem;
+    }
+    .cta-band p { font-size: .9rem; color: #888; margin-bottom: 2rem; }
+    .cta-band .btn-primary {
+      display: inline-block;
+      background: var(--cyan);
+      color: var(--ink);
+      font-family: 'Space Mono', monospace;
+      font-size: .8rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      padding: .85rem 2rem;
+      text-decoration: none;
+      border-radius: 0;
+      border: 2px solid var(--cyan);
+      transition: background .2s, color .2s;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+    .cta-band .btn-primary:hover {
+      background: transparent;
+      color: var(--cyan);
+    }
+
+    /* Ligne décorative pointillée entre les sections */
+    .dot-divider {
+      position: relative; z-index: 1;
+      height: 1px;
+      background: repeating-linear-gradient(to right, var(--cyan) 0, var(--cyan) 4px, transparent 4px, transparent 12px);
+      margin: 0 3rem;
+      opacity: .25;
+    }
     /* ── INSCRIPTION ── */
     #inscription { background: var(--white); }
     .form-wrapper {
