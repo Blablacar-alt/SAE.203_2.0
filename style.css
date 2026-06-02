@@ -11,96 +11,90 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     html { scroll-behavior: smooth; }
+        /* ── SALLES ── */
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      color: var(--text);
-      background: var(--white);
-    }
+      .salles-page {
+        position: relative;
+        min-height: 100vh;
+      }
 
-    /* ── NAV ── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      background: var(--mint);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2rem; height: 56px;
-    }
-    .nav-logo {
-      font-family: 'Space Mono', monospace;
-      font-size: 1rem; font-weight: 700;
-      color: var(--black); text-decoration: none;
-    }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a {
-      font-size: .9rem; font-weight: 500;
-      color: var(--black); text-decoration: none;
-      transition: opacity .2s;
-    }
-    .nav-links a:hover { opacity: .6; }
+      /* Assure que le contenu passe devant */
+      .page-header,
+      .salles-list,
+      .cta-band {
+        position: relative;
+        z-index: 1;
+      }
+        .page-header {
+          text-align: center;
+          padding: 4rem 2rem 2rem;
+        }
+        .page-header h1 {
+          font-family: 'CutePixel', monospace;
+          font-size: clamp(2rem, 6vw, 3.5rem);
+          font-weight: 700; letter-spacing: -.01em;
+        }
+        .page-header p {
+          margin-top: .8rem;
+          font-size: 1rem; color: #555;
+        }
+        .salles-list {
+          padding: 2rem;
+          max-width: 900px;
+          margin: 0 auto;
+          display: flex; flex-direction: column; gap: 2rem;
+        }
+        .salle-card {
+          background: var(--white);
+          border: 1px solid #e0e0e0;
+          border-radius: 16px;
+          padding: 2.5rem;
+        }
+        .salle-tag {
+          display: inline-block;
+          background: var(--mint-dark);
+          color: var(--black);
+          font-size: .75rem; font-weight: 700;
+          padding: .25rem .7rem; border-radius: 999px;
+          margin-bottom: 1rem;
+        }
+        .salle-card h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: .35rem; }
+        .salle-card .subtitle { font-style: italic; color: #666; font-size: .9rem; margin-bottom: 1rem; }
+        .salle-card p { font-size: .92rem; line-height: 1.7; color: #444; margin-bottom: 1.5rem; }
+        .programme-label { font-weight: 600; font-size: .88rem; margin-bottom: .75rem; }
+        .programme-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: .4rem .5rem;
+          margin-bottom: 1.5rem;
+        }
+        .programme-item {
+          display: flex; align-items: center; gap: .5rem;
+          font-size: .85rem; color: #333;
+        }
+        .programme-item::before {
+          content: '';
+          width: 8px; height: 8px; border-radius: 50%;
+          background: var(--mint-dark); flex-shrink: 0;
+        }
+        .btn-reserver {
+          background: none; border: none;
+          color: var(--black); font-family: 'DM Sans', sans-serif;
+          font-size: .9rem; font-weight: 600;
+          cursor: pointer; padding: 0;
+          text-decoration: underline; text-underline-offset: 3px;
+          transition: color .2s;
+        }
+        .btn-reserver:hover { color: #2bb5a0; }
 
-    /* ── SECTIONS ── */
-    section { display: none; }
-    section.active { display: block; }
-
-    /* ── HERO ── */
-    #accueil {
-      background: var(--white);
-      min-height: 100vh;
-    }
-    .hero {
-      text-align: center;
-      padding: 5rem 2rem 3rem;
-    }
-    .hero-title {
-      font-family: 'CutePixel', monospace;
-      font-size: clamp(2.8rem, 8vw, 5.5rem);
-      font-weight: 700;
-      letter-spacing: +.05em;
-      line-height: 1;
-      color: var(--black);
-    }
-    .hero-title span { color: var(--accent); }
-    .hero-sub {
-      margin: 2rem auto 0;
-      max-width: 540px;
-      font-size: 1rem;
-      line-height: 1.6;
-      color: #444;
-    }
-    .hero-sub strong { color: #2bb5a0; }
-    .hero-buttons {
-      margin-top: 2.5rem;
-      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
-    }
-    .btn-primary {
-      background: var(--mint-dark);
-      color: var(--black);
-      border: none; border-radius: 999px;
-      padding: .75rem 1.8rem;
-      font-family: 'DM Sans', sans-serif;
-      font-size: .95rem; font-weight: 600;
-      cursor: pointer; transition: background .2s;
-    }
-    .btn-primary:hover { background: #5cd3c5; }
-    .btn-outline {
-      background: transparent;
-      color: var(--black);
-      border: 2px solid var(--black); border-radius: 999px;
-      padding: .75rem 1.8rem;
-      font-family: 'DM Sans', sans-serif;
-      font-size: .95rem; font-weight: 600;
-      cursor: pointer; transition: background .2s, color .2s;
-    }
-    .btn-outline:hover { background: var(--black); color: var(--white); }
-    .hero-meta {
-      margin-top: 2.5rem;
-      display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;
-      font-size: .85rem; color: #555;
-    }
-    .hero-meta span::before { margin-right: .35rem; }
-
-    /* Explorer block */
-    .explorer-section {
+        .cta-band {
+          background: var(--mint);
+          text-align: center;
+          padding: 4rem 2rem;
+          margin-top: 2rem;
+        }
+        .cta-band h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: .5rem; }
+        .cta-band p { font-size: .9rem; color: #444; margin-bottom: 1.5rem; }
       background: var(--mint);
       padding: 4rem 2rem;
     }
@@ -173,6 +167,90 @@
     color: #444;
   }
 
+    /* ── SALLES ── */
+
+  .salles-page {
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* Assure que le contenu passe devant */
+  .page-header,
+  .salles-list,
+  .cta-band {
+    position: relative;
+    z-index: 1;
+  }
+    .page-header {
+      text-align: center;
+      padding: 4rem 2rem 2rem;
+    }
+    .page-header h1 {
+      font-family: 'CutePixel', monospace;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 700; letter-spacing: -.01em;
+    }
+    .page-header p {
+      margin-top: .8rem;
+      font-size: 1rem; color: #555;
+    }
+    .salles-list {
+      padding: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex; flex-direction: column; gap: 2rem;
+    }
+    .salle-card {
+      background: var(--white);
+      border: 1px solid #e0e0e0;
+      border-radius: 16px;
+      padding: 2.5rem;
+    }
+    .salle-tag {
+      display: inline-block;
+      background: var(--mint-dark);
+      color: var(--black);
+      font-size: .75rem; font-weight: 700;
+      padding: .25rem .7rem; border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    .salle-card h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: .35rem; }
+    .salle-card .subtitle { font-style: italic; color: #666; font-size: .9rem; margin-bottom: 1rem; }
+    .salle-card p { font-size: .92rem; line-height: 1.7; color: #444; margin-bottom: 1.5rem; }
+    .programme-label { font-weight: 600; font-size: .88rem; margin-bottom: .75rem; }
+    .programme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: .4rem .5rem;
+      margin-bottom: 1.5rem;
+    }
+    .programme-item {
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .85rem; color: #333;
+    }
+    .programme-item::before {
+      content: '';
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--mint-dark); flex-shrink: 0;
+    }
+    .btn-reserver {
+      background: none; border: none;
+      color: var(--black); font-family: 'DM Sans', sans-serif;
+      font-size: .9rem; font-weight: 600;
+      cursor: pointer; padding: 0;
+      text-decoration: underline; text-underline-offset: 3px;
+      transition: color .2s;
+    }
+    .btn-reserver:hover { color: #2bb5a0; }
+
+    .cta-band {
+      background: var(--mint);
+      text-align: center;
+      padding: 4rem 2rem;
+      margin-top: 2rem;
+    }
+    .cta-band h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: .5rem; }
+    .cta-band p { font-size: .9rem; color: #444; margin-bottom: 1.5rem; }
     /* ── INSCRIPTION ── */
     #inscription { background: var(--white); }
     .form-wrapper {
@@ -411,14 +489,12 @@
 
 /* ── FOND PAGE SALLES ── */
 body {
-  body {
-  background-image:
-  url("/Image fond\Style/fond_bleu_fonce1.png"),
-}
+  background-image: url("./Image_fond/Style_1/fond_bleu_fonce1.png");
   background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
 }
 
 .salles-page {
