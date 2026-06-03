@@ -1,7 +1,11 @@
 <?php
 session_start();
 
-$host = 'localhost'; $db = 'sae203'; $user = 'root'; $pass = 'local';
+$host    = 'ijtebowcompte3.mysql.db';
+$db      = 'ijtebowcompte3';
+$user    = 'ijtebowcompte3';
+$pass    = '56sc9NVi2026';
+$charset = 'utf8';
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

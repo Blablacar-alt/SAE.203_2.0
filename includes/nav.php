@@ -1,5 +1,4 @@
 <?php
-// Public navigation partial
 ?>
 <nav class="main-nav">
   <div class="nav-container">

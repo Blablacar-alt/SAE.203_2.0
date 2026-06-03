@@ -1,5 +1,4 @@
 <?php
-// Public footer partial
 ?>
 <footer class="main-footer">
   <div class="footer-grid">

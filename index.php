@@ -12,14 +12,14 @@
 <main class="home-page">
   <section class="hero-section">
     <div class="glitch-container">
-      <div class="tech-tag">[ EXPOSITION MULTIMÉDIA ]</div>
+      <div class="tech-tag"> EXPOSITION MULTIMÉDIA </div>
       <h1 class="hero-title" data-text="E-LLUSION">E-LLUSION</h1>
       <p class="hero-tagline">Quand le virtuel redéfinit la perception du réel.</p>
     </div>
     
     <div class="hero-buttons">
       <a href="salles.php" class="btn-discover">Découvrir l'expo</a>
-      <a href="inscription.php" class="btn-ticket">Réserver un billet</a>
+      <a href="inscription.php" class="btn-ticket">Réserver une salle</a>
     </div>
     
     <div class="vertical-axis"></div>
