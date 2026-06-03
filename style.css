@@ -108,7 +108,50 @@ body {
   transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .nav-item:hover::after { width: 100%; }
+/* ── Complément Navigation E-LLUSION ── */
 
+.main-nav .nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem; /* Espace équilibré entre les éléments */
+}
+
+.main-nav .nav-item {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+/* Effet de survol cyber souligné pour le lien Mon Compte */
+.main-nav .nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--cyan);
+  transition: width 0.2s ease;
+}
+
+.main-nav .nav-item:hover {
+  color: var(--cyan-dark);
+}
+
+.main-nav .nav-item:hover::after {
+  width: 100%;
+}
+
+/* Ajustement pour s'assurer que le bouton d'inscription ne bouge pas */
+.main-nav .btn-reserver {
+  margin-left: 0.5rem;
+}
 /* ==================================================
    ── 4. STYLES GENERAUX DES PAGES EXPO / SALLES ──
    ================================================== */
