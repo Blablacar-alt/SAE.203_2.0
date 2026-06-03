@@ -29,7 +29,7 @@
     <div class="footer-section links-section">
       <a href="mentions.php" class="footer-link">› Mentions légales</a>
       <a href="contact.php" class="footer-link">› Nous contacter</a>
-      <a href="https://instagram.com/mmi_chambery" class="footer-link" target="_blank">› Instagram</a>
+      <a href="https://instagram.com/mmichambery" class="footer-link" target="_blank">› Instagram</a>
     </div>
 
   </div>

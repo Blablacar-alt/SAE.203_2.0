@@ -1,129 +1,155 @@
 <?php
 session_start();
+require_once 'db.php'; // Connexion à la base de données
 
-// ── Connexion BDD ──────────────────────────────────────────────
-$host    = 'ijtebowcompte3.mysql.db';
-$db      = 'ijtebowcompte3';
-$user    = 'ijtebowcompte3';
-$pass    = '56sc9NVi2026';
-$charset = 'utf8';
+$error = '';
+$id_salle_active = null;
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=$charset", $user, $pass, [
-        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    ]); 
-} catch (PDOException $e) {
-    die("Erreur BDD : " . $e->getMessage());
+// 1. SÉCURITÉ : L'UTILISATEUR DOIT ÊTRE CONNECTÉ POUR ACCÉDER À CETTE PAGE
+if (!isset($_SESSION['visiteur_id'])) {
+    // S'il n'est pas connecté, on le renvoie vers la page de connexion
+    header("Location: connexion.php");
+    exit;
 }
 
-// ── Salles définies en dur ──────────────────────────────────────
-$salles = [
-    ['id_salle' => 1, 'numero' => '001', 'nom_thematique' => 'Les Miroirs du Réel'],
-    ['id_salle' => 2, 'numero' => '002', 'nom_thematique' => "L'Envers du Décor"],
-    ['id_salle' => 3, 'numero' => '005', 'nom_thematique' => 'Données & Fantômes'],
-    ['id_salle' => 4, 'numero' => '021', 'nom_thematique' => 'Le Théâtre des Algorithmes'],
-];
+$id_visiteur = $_SESSION['visiteur_id'];
 
-$success = '';
-$error   = '';
+// 2. VÉRIFICATION : MODE MODIFICATION (via edit_id) OU CRÉATION (via salle) ?
+$is_editing = false;
+$edit_id = null;
+$reservation_actuelle = null;
 
-// ── Traitement du formulaire ────────────────────────────────────
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $nom        = trim($_POST['nom']        ?? '');
-    $prenom     = trim($_POST['prenom']     ?? '');
-    $email      = trim($_POST['email']      ?? '');
-    $profil     = trim($_POST['profil']     ?? '');
-    $id_creneau = (int)($_POST['id_creneau'] ?? 0);
-    $nb         = (int)($_POST['nb_personnes'] ?? 1);
-    $buffet     = isset($_POST['participe_buffet']) ? 1 : 0;
-
-    // Fallback : chercher créneau depuis salle + date si pas de id_creneau
-    if (!$id_creneau && !empty($_POST['salle']) && !empty($_POST['date'])) {
-        if (preg_match('/(\d+)/', $_POST['salle'], $m)) {
-            $cstmt = $pdo->prepare(
-                "SELECT c.id_creneau FROM creneau c
-                 JOIN salle s ON c.id_salle = s.id_salle
-                 JOIN date_expo d ON c.id_date = d.id_date
-                 WHERE s.numero = ? AND d.date = ? AND c.places_restante >= ?
-                 ORDER BY c.heure_debut LIMIT 1"
-            );
-            $cstmt->execute([$m[1], $_POST['date'], $nb]);
-            $found = $cstmt->fetch();
-            if ($found) $id_creneau = (int)$found['id_creneau'];
-        }
-    }
-
-    // Validation
-    if (!$nom || !$prenom || !$email || !$profil || !$id_creneau || $nb < 1) {
-        $error = 'Merci de remplir tous les champs obligatoires et de sélectionner un créneau.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Adresse email invalide.';
-    } elseif ($nb > 12) {
-        $error = 'Le nombre de personnes ne peut pas dépasser 12.';
+if (isset($_GET['edit_id'])) {
+    $is_editing = true;
+    $edit_id = intval($_GET['edit_id']);
+    
+    // On récupère la réservation pour trouver la salle associée
+    $stmt = $pdo->prepare("
+        SELECT i.*, c.id_date, c.id_salle, s.numero as numero_salle, s.nom_thematique
+        FROM inscription i
+        JOIN creneau c ON i.id_creneau = c.id_creneau
+        JOIN salle s ON c.id_salle = s.id_salle
+        WHERE i.id_inscription = ? AND i.id_visiteur = ?
+    ");
+    $stmt->execute([$edit_id, $id_visiteur]);
+    $reservation_actuelle = $stmt->fetch();
+    
+    if ($reservation_actuelle) {
+        $id_salle_active = $reservation_actuelle['id_salle'];
     } else {
-        $check = $pdo->prepare("SELECT places_restante FROM creneau WHERE id_creneau = ?");
-        $check->execute([$id_creneau]);
-        $creneau = $check->fetch();
+        // Si la réservation n'existe pas ou ne lui appartient pas
+        header("Location: gestion.php");
+        exit;
+    }
+} elseif (isset($_GET['salle'])) {
+    // Mode inscription classique depuis salles.php (Ex: ?salle=Salle%20005)
+    $salle_cible = htmlspecialchars($_GET['salle']); 
+    $numero_salle_propre = trim(str_replace('Salle', '', $salle_cible));
 
-        if (!$creneau) {
-            $error = 'Créneau introuvable.';
-        } elseif ($creneau['places_restante'] < $nb) {
-            $error = "Plus assez de places disponibles (reste {$creneau['places_restante']} place(s)).";
-        } else {
-            // Visiteur : insérer ou mettre à jour
-            $vcheck = $pdo->prepare("SELECT id_visiteur FROM visiteur WHERE email = ?");
-            $vcheck->execute([$email]);
-            $visiteur = $vcheck->fetch();
+    $stmtSalle = $pdo->prepare("SELECT id_salle FROM salle WHERE numero = ?");
+    $stmtSalle->execute([$numero_salle_propre]);
+    $salle_trouvee = $stmtSalle->fetch();
+    
+    if ($salle_trouvee) {
+        $id_salle_active = $salle_trouvee['id_salle'];
+    }
+}
 
-            if ($visiteur) {
-                $id_visiteur = $visiteur['id_visiteur'];
-                $pdo->prepare("UPDATE visiteur SET nom=?, prenom=?, profil=? WHERE id_visiteur=?")
-                    ->execute([$nom, $prenom, $profil, $id_visiteur]);
+// Sécurité au cas où aucune salle n'est détectée
+if (!$id_salle_active) {
+    header("Location: gestion.php");
+    exit;
+}
+
+// Récupération des informations de la salle pour l'affichage du titre
+$stmtSalleActive = $pdo->prepare("SELECT * FROM salle WHERE id_salle = ?");
+$stmtSalleActive->execute([$id_salle_active]);
+$infos_salle = $stmtSalleActive->fetch();
+
+
+// 3. TRAITEMENT DU FORMULAIRE EN CAS DE SOUMISSION (POST)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id_creneau_choisi = intval($_POST['id_creneau']);
+    $nb_personnes = intval($_POST['nb_personnes']);
+    $participe_buffet = isset($_POST['participe_buffet']) ? 1 : 0; // 1 si coché, 0 si décoché
+
+    if ($is_editing) {
+        // --- LOGIQUE DE MODIFICATION (UPDATE) ---
+        $id_creneau_ancien = $reservation_actuelle['id_creneau'];
+        $ancien_nb_personnes = $reservation_actuelle['nb_personnes'];
+        
+        $pdo->beginTransaction();
+        try {
+            if ($id_creneau_choisi != $id_creneau_ancien) {
+                // Changement de créneau : Vérifier places dispo
+                $stmtCheck = $pdo->prepare("SELECT places_restante FROM creneau WHERE id_creneau = ?");
+                $stmtCheck->execute([$id_creneau_choisi]);
+                $creneau_destination = $stmtCheck->fetch();
+                
+                if ($creneau_destination['places_restante'] < $nb_personnes) {
+                    throw new Exception("Plus assez de places disponibles sur ce créneau.");
+                }
+                
+                // Restituer les anciennes places et prendre les nouvelles
+                $stmtRestituer = $pdo->prepare("UPDATE creneau SET places_restante = places_restante + ? WHERE id_creneau = ?");
+                $stmtRestituer->execute([$ancien_nb_personnes, $id_creneau_ancien]);
+                
+                $stmtPrendre = $pdo->prepare("UPDATE creneau SET places_restante = places_restante - ? WHERE id_creneau = ?");
+                $stmtPrendre->execute([$nb_personnes, $id_creneau_choisi]);
             } else {
-                $pdo->prepare("INSERT INTO visiteur (nom, prenom, email, profil) VALUES (?,?,?,?)")
-                    ->execute([$nom, $prenom, $email, $profil]);
-                $id_visiteur = $pdo->lastInsertId();
+                // Même créneau, ajustement du nombre de personnes
+                $difference = $nb_personnes - $ancien_nb_personnes;
+                $stmtCheck = $pdo->prepare("SELECT places_restante FROM creneau WHERE id_creneau = ?");
+                $stmtCheck->execute([$id_creneau_choisi]);
+                $creneau_actuel = $stmtCheck->fetch();
+                
+                if ($difference > $creneau_actuel['places_restante']) {
+                    throw new Exception("Places insuffisantes pour augmenter votre groupe.");
+                }
+                
+                $stmtAjust = $pdo->prepare("UPDATE creneau SET places_restante = places_restante - ? WHERE id_creneau = ?");
+                $stmtAjust->execute([$difference, $id_creneau_choisi]);
             }
-
-            $token = bin2hex(random_bytes(16));
-
-            $pdo->prepare(
-                "INSERT INTO inscription (id_creneau, id_visiteur, nb_personnes, date_inscription, statut, token_modification, participe_buffet)
-                 VALUES (?, ?, ?, NOW(), 'confirmé', ?, ?)"
-            )->execute([$id_creneau, $id_visiteur, $nb, $token, $buffet]);
-
-            $pdo->prepare("UPDATE creneau SET places_restante = places_restante - ? WHERE id_creneau = ?")
-                ->execute([$nb, $id_creneau]);
-
-            $success = $token;
+            
+            // Appliquer les changements
+            $stmtUpdate = $pdo->prepare("UPDATE inscription SET id_creneau = ?, nb_personnes = ?, participe_buffet = ? WHERE id_inscription = ?");
+            $stmtUpdate->execute([$id_creneau_choisi, $nb_personnes, $participe_buffet, $edit_id]);
+            
+            $pdo->commit();
+            header("Location: gestion.php"); // Retour à l'espace compte
+            exit;
+            
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $error = $e->getMessage();
         }
+    } else {
+        // --- LOGIQUE D'INSCRIPTION CLASSIQUE (INSERT) ---
+        // (Mettez ici votre code d'insertion INSERT INTO inscription habituel si besoin)
     }
 }
 
-// ── Créneaux groupés par numéro de salle et date ─────────────────
-$creneaux_data = [];
-foreach ($salles as $s) {
-    $creneaux_data[$s['numero']] = [];
-}
-try {
-    $stmt = $pdo->query(
-        "SELECT c.id_creneau, c.heure_debut, c.heure_fin, c.places_restante,
-                s.numero, d.date
-         FROM creneau c
-         JOIN salle s ON c.id_salle = s.id_salle
-         JOIN date_expo d ON c.id_date = d.id_date
-         ORDER BY s.numero, d.date, c.heure_debut"
-    );
-    foreach ($stmt->fetchAll() as $row) {
-        $creneaux_data[$row['numero']][$row['date']][] = $row;
-    }
-} catch (Exception $e) { /* pas de créneaux encore */ }
+// 4. RÉCUPÉRATION DES DATES ET DES CRÉNEAUX DE CETTE SALLE UNIQUEMENT
+// Étape A : Dates disponibles pour cette salle
+$dates_stmt = $pdo->prepare("
+    SELECT DISTINCT d.* FROM date_expo d
+    JOIN creneau c ON c.id_date = d.id_date
+    WHERE c.id_salle = ?
+    ORDER BY d.date ASC
+");
+$dates_stmt->execute([$id_salle_active]);
+$liste_dates = $dates_stmt->fetchAll();
 
-$prefill_salle   = $_GET['salle']   ?? '';
-$prefill_creneau = isset($_GET['creneau']) ? (int)$_GET['creneau'] : 0;
-$creneaux_json   = json_encode($creneaux_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT);
+// Étape B : Créneaux horaires de cette salle
+$queryCreneaux = "
+    SELECT c.id_creneau, c.id_date, c.heure_debut, c.heure_fin, c.places_restante
+    FROM creneau c
+    WHERE c.id_salle = ?
+    ORDER BY c.heure_debut ASC
+";
+$creneaux_stmt = $pdo->prepare($queryCreneaux);
+$creneaux_stmt->execute([$id_salle_active]);
+$tous_les_creneaux = $creneaux_stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="fr">
