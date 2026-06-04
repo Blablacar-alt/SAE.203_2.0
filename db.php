@@ -1,26 +1,23 @@
 <?php
-// db.php : Connexion à la base de données OVH / Distante
+// db.php — Configuration de la connexion à la base de données en ligne (Serveur MMI)
 
-$host    = 'ijtebowcompte3.mysql.db';
-$db      = 'ijtebowcompte3';
-$user    = 'ijtebowcompte3';
-$pass    = '56sc9NVi2026';
-$charset = 'utf8mb4'; // utf8mb4 est recommandé pour gérer tous les caractères et émojis
+$host = '192.168.135.113';
+$port = '3306';
+$db   = 'rahimmoh';
+$user = 'user';
+$pass = 'rQUSxP2xUCxnzU45';
+$charset = 'utf8mb4';
 
-// Configuration des options PDO
+$dsn = "mysql:host=$host;port=$port;dbname=$db;charset=$charset";
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     PDO::ATTR_EMULATE_PREPARES   => false,
 ];
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-
 try {
-    // ATTENTION : Les variables ($user et $pass) doivent bien être placées ici !
-    $pdo = new PDO($dsn, $user, $pass, $options);
+     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
-    // En production, il est préférable de ne pas afficher le message brut pour des raisons de sécurité
-    die("Erreur de connexion à la base de données : " . $e->getMessage());
+     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 ?>

@@ -64,5 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="btn-cyber">Accéder à mon espace</button>
     </form>
 </div>
+<?php include __DIR__ . '/includes/footer.php'; ?>
 </body>
 </html>

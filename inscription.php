@@ -1,412 +1,413 @@
 <?php
 session_start();
-require_once 'db.php'; // Connexion à la base de données
+require_once 'db.php';
 
-$error = '';
-$id_salle_active = null;
-
-// 1. SÉCURITÉ : L'UTILISATEUR DOIT ÊTRE CONNECTÉ POUR ACCÉDER À CETTE PAGE
+// Sécurité : Si le visiteur n'est pas connecté, retour à la page de connexion
 if (!isset($_SESSION['visiteur_id'])) {
-    // S'il n'est pas connecté, on le renvoie vers la page de connexion
     header("Location: connexion.php");
     exit;
 }
 
 $id_visiteur = $_SESSION['visiteur_id'];
+$error = '';
+$success = '';
 
-// 2. VÉRIFICATION : MODE MODIFICATION (via edit_id) OU CRÉATION (via salle) ?
-$is_editing = false;
-$edit_id = null;
-$reservation_actuelle = null;
+// FONCTION POUR ENVOYER UN EMAIL EN HTML AUX ACCOMPAGNANTS AJOUTÉS
+function envoyerEmailAccompagnant($to, $prenom, $nom, $nom_salle, $date_choisie, $heure_deb, $heure_fin) {
+    $subject = "=?UTF-8?B?".base64_encode("Votre invitation pour l'exposition E-LLUSION")."?=";
+    
+    $headers = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+    $headers .= "From: E-LLUSION <noreply@univ-savoie.fr>" . "\r\n";
+    
+    $date_formattee = date("d/m/2026", strtotime($date_choisie));
+    $heure_deb_f = substr($heure_deb, 0, 5);
+    $heure_fin_f = substr($heure_fin, 0, 5);
 
-if (isset($_GET['edit_id'])) {
-    $is_editing = true;
-    $edit_id = intval($_GET['edit_id']);
-    
-    // On récupère la réservation pour trouver la salle associée
-    $stmt = $pdo->prepare("
-        SELECT i.*, c.id_date, c.id_salle, s.numero as numero_salle, s.nom_thematique
-        FROM inscription i
-        JOIN creneau c ON i.id_creneau = c.id_creneau
-        JOIN salle s ON c.id_salle = s.id_salle
-        WHERE i.id_inscription = ? AND i.id_visiteur = ?
-    ");
-    $stmt->execute([$edit_id, $id_visiteur]);
-    $reservation_actuelle = $stmt->fetch();
-    
-    if ($reservation_actuelle) {
-        $id_salle_active = $reservation_actuelle['id_salle'];
-    } else {
-        // Si la réservation n'existe pas ou ne lui appartient pas
-        header("Location: gestion.php");
-        exit;
-    }
-} elseif (isset($_GET['salle'])) {
-    // Mode inscription classique depuis salles.php (Ex: ?salle=Salle%20005)
-    $salle_cible = htmlspecialchars($_GET['salle']); 
-    $numero_salle_propre = trim(str_replace('Salle', '', $salle_cible));
+    $message = '
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body { font-family: Arial, sans-serif; background-color: #f4f7f6; color: #222; margin: 0; padding: 20px; }
+            .card { max-width: 550px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.06); }
+            .header { background: linear-gradient(135deg, #111b21 0%, #00b8a0 100%); color: white; padding: 30px; text-align: center; }
+            .header h2 { margin: 0; font-size: 24px; letter-spacing: 2px; }
+            .content { padding: 25px; line-height: 1.6; }
+            .details-box { background: #e6f8f6; border-left: 4px solid #00b8a0; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <div class="header">
+                <h2>E-LLUSION</h2>
+                <p style="margin:5px 0 0 0; opacity:0.8; font-size:12px; text-transform:uppercase;">Exposition Immersive</p>
+            </div>
+            <div class="content">
+                <p>Bonjour <strong>'.htmlspecialchars($prenom).' '.htmlspecialchars($nom).'</strong>,</p>
+                <p>Une place vous a été réservée pour l\'exposition événement <strong>E-LLUSION</strong> à l\'IUT de Chambéry.</p>
+                
+                <div class="details-box">
+                    🏛️ <strong>Salle :</strong> '.htmlspecialchars($nom_salle).'<br>
+                    📅 <strong>Date :</strong> '.$date_formattee.'<br>
+                    ⏱️ <strong>Créneau :</strong> de '.$heure_deb_f.' à '.$heure_fin_f.'
+                </div>
+                
+                <p style="font-size: 13px; color: #666;">Nous vous prions de vous présenter 5 minutes avant le début de votre séance.</p>
+            </div>
+        </div>
+    </body>
+    </html>';
 
-    $stmtSalle = $pdo->prepare("SELECT id_salle FROM salle WHERE numero = ?");
-    $stmtSalle->execute([$numero_salle_propre]);
-    $salle_trouvee = $stmtSalle->fetch();
-    
-    if ($salle_trouvee) {
-        $id_salle_active = $salle_trouvee['id_salle'];
-    }
+    @mail($to, $subject, $message, $headers);
 }
 
-// Sécurité au cas où aucune salle n'est détectée
-if (!$id_salle_active) {
-    header("Location: gestion.php");
-    exit;
-}
-
-// Récupération des informations de la salle pour l'affichage du titre
-$stmtSalleActive = $pdo->prepare("SELECT * FROM salle WHERE id_salle = ?");
-$stmtSalleActive->execute([$id_salle_active]);
-$infos_salle = $stmtSalleActive->fetch();
-
-
-// 3. TRAITEMENT DU FORMULAIRE EN CAS DE SOUMISSION (POST)
+// TRAITEMENT DU FORMULAIRE D'INSCRIPTION (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id_creneau_choisi = intval($_POST['id_creneau']);
-    $nb_personnes = intval($_POST['nb_personnes']);
-    $participe_buffet = isset($_POST['participe_buffet']) ? 1 : 0; // 1 si coché, 0 si décoché
+    $id_creneau_choisi = isset($_POST['id_creneau']) ? intval($_POST['id_creneau']) : 0;
+    $nb_personnes = isset($_POST['nb_personnes']) ? intval($_POST['nb_personnes']) : 1;
+    $participe_buffet = isset($_POST['participe_buffet']) ? 1 : 0;
+    $accompagnants = isset($_POST['accompagnants']) ? $_POST['accompagnants'] : [];
 
-    if ($is_editing) {
-        // --- LOGIQUE DE MODIFICATION (UPDATE) ---
-        $id_creneau_ancien = $reservation_actuelle['id_creneau'];
-        $ancien_nb_personnes = $reservation_actuelle['nb_personnes'];
-        
+    if (empty($id_creneau_choisi)) {
+        $error = "Veuillez sélectionner un créneau horaire pour valider votre inscription.";
+    } else {
         $pdo->beginTransaction();
         try {
-            if ($id_creneau_choisi != $id_creneau_ancien) {
-                // Changement de créneau : Vérifier places dispo
-                $stmtCheck = $pdo->prepare("SELECT places_restante FROM creneau WHERE id_creneau = ?");
-                $stmtCheck->execute([$id_creneau_choisi]);
-                $creneau_destination = $stmtCheck->fetch();
-                
-                if ($creneau_destination['places_restante'] < $nb_personnes) {
-                    throw new Exception("Plus assez de places disponibles sur ce créneau.");
-                }
-                
-                // Restituer les anciennes places et prendre les nouvelles
-                $stmtRestituer = $pdo->prepare("UPDATE creneau SET places_restante = places_restante + ? WHERE id_creneau = ?");
-                $stmtRestituer->execute([$ancien_nb_personnes, $id_creneau_ancien]);
-                
-                $stmtPrendre = $pdo->prepare("UPDATE creneau SET places_restante = places_restante - ? WHERE id_creneau = ?");
-                $stmtPrendre->execute([$nb_personnes, $id_creneau_choisi]);
-            } else {
-                // Même créneau, ajustement du nombre de personnes
-                $difference = $nb_personnes - $ancien_nb_personnes;
-                $stmtCheck = $pdo->prepare("SELECT places_restante FROM creneau WHERE id_creneau = ?");
-                $stmtCheck->execute([$id_creneau_choisi]);
-                $creneau_actuel = $stmtCheck->fetch();
-                
-                if ($difference > $creneau_actuel['places_restante']) {
-                    throw new Exception("Places insuffisantes pour augmenter votre groupe.");
-                }
-                
-                $stmtAjust = $pdo->prepare("UPDATE creneau SET places_restante = places_restante - ? WHERE id_creneau = ?");
-                $stmtAjust->execute([$difference, $id_creneau_choisi]);
+            // Vérification de la disponibilité des places
+            $stmtCheck = $pdo->prepare("
+                SELECT c.*, s.nom_thematique, d.date 
+                FROM creneau c 
+                JOIN salle s ON c.id_salle = s.id_salle 
+                JOIN date_expo d ON c.id_date = d.id_date 
+                WHERE c.id_creneau = ?
+            ");
+            $stmtCheck->execute([$id_creneau_choisi]);
+            $creneau = $stmtCheck->fetch();
+
+            if (!$creneau) {
+                throw new Exception("Le créneau sélectionné n'existe pas.");
             }
-            
-            // Appliquer les changements
-            $stmtUpdate = $pdo->prepare("UPDATE inscription SET id_creneau = ?, nb_personnes = ?, participe_buffet = ? WHERE id_inscription = ?");
-            $stmtUpdate->execute([$id_creneau_choisi, $nb_personnes, $participe_buffet, $edit_id]);
-            
+
+            if ($creneau['places_restante'] < $nb_personnes) {
+                throw new Exception("Désolé, il ne reste plus que " . $creneau['places_restante'] . " place(s) sur ce créneau. Votre demande de " . $nb_personnes . " places ne peut aboutir.");
+            }
+
+            // Un jeton (token) unique est généré pour lier le groupe ensemble
+            $token_groupe = md5(uniqid(rand(), true));
+
+            // 1. Enregistrement de l'utilisateur principal
+            $stmtMain = $pdo->prepare("
+                INSERT INTO inscription (id_visiteur, id_creneau, nb_personnes, date_inscription, statut, token_modification, participe_buffet) 
+                VALUES (?, ?, 1, NOW(), 'confirmé', ?, ?)
+            ");
+            $stmtMain->execute([$id_visiteur, $id_creneau_choisi, $token_groupe, $participe_buffet]);
+
+            // 2. Enregistrement de chaque accompagnant
+            foreach ($accompagnants as $acc) {
+                $acc_nom = trim($acc['nom'] ?? '');
+                $acc_prenom = trim($acc['prenom'] ?? '');
+                $acc_email = trim($acc['email'] ?? '');
+
+                if (!empty($acc_nom) && !empty($acc_prenom)) {
+                    // Création ou récupération du compte visiteur de l'accompagnant
+                    $stmtAccVisiteur = $pdo->prepare("
+                        INSERT INTO visiteur (nom, prenom, email, profil) 
+                        VALUES (?, ?, ?, 'Accompagnant') 
+                        ON DUPLICATE KEY UPDATE id_visiteur=LAST_INSERT_ID(id_visiteur)
+                    ");
+                    $stmtAccVisiteur->execute([$acc_nom, $acc_prenom, !empty($acc_email) ? $acc_email : null]);
+                    $id_acc_visiteur = $pdo->lastInsertId();
+
+                    // Liaison de l'accompagnant à la réservation
+                    $stmtAccInsc = $pdo->prepare("
+                        INSERT INTO inscription (id_visiteur, id_creneau, nb_personnes, date_inscription, statut, token_modification, participe_buffet) 
+                        VALUES (?, ?, 1, NOW(), 'confirmé', ?, 0)
+                    ");
+                    $stmtAccInsc->execute([$id_acc_visiteur, $id_creneau_choisi, $token_groupe]);
+
+                    // Envoi d'un e-mail si une adresse valide est transmise
+                    if (!empty($acc_email)) {
+                        envoyerEmailAccompagnant($acc_email, $acc_prenom, $acc_nom, $creneau['nom_thematique'], $creneau['date'], $creneau['heure_debut'], $creneau['heure_fin']);
+                    }
+                }
+            }
+
+            // 3. Déduction du nombre de places globales réservées
+            $stmtUpdatePlaces = $pdo->prepare("UPDATE creneau SET places_restante = places_restante - ? WHERE id_creneau = ?");
+            $stmtUpdatePlaces->execute([$nb_personnes, $id_creneau_choisi]);
+
             $pdo->commit();
-            header("Location: gestion.php"); // Retour à l'espace compte
-            exit;
+            $success = "Votre inscription a bien été enregistrée ! Vous pouvez consulter vos billets depuis votre espace compte.";
             
+            // Redirection vers la page de gestion après 2 secondes
+            header("Refresh: 2; url=gestion.php");
+
         } catch (Exception $e) {
             $pdo->rollBack();
             $error = $e->getMessage();
         }
-    } else {
-        // --- LOGIQUE D'INSCRIPTION CLASSIQUE (INSERT) ---
-        // (Mettez ici votre code d'insertion INSERT INTO inscription habituel si besoin)
     }
 }
 
-// 4. RÉCUPÉRATION DES DATES ET DES CRÉNEAUX DE CETTE SALLE UNIQUEMENT
-// Étape A : Dates disponibles pour cette salle
-$dates_stmt = $pdo->prepare("
-    SELECT DISTINCT d.* FROM date_expo d
-    JOIN creneau c ON c.id_date = d.id_date
-    WHERE c.id_salle = ?
-    ORDER BY d.date ASC
-");
-$dates_stmt->execute([$id_salle_active]);
-$liste_dates = $dates_stmt->fetchAll();
+// CHARGEMENT DES DONNÉES DEPUIS LA BDD POUR L'INTERFACE DYNAMIQUE
+$salles = $pdo->query("SELECT * FROM salle ORDER BY numero ASC")->fetchAll();
 
-// Étape B : Créneaux horaires de cette salle
-$queryCreneaux = "
-    SELECT c.id_creneau, c.id_date, c.heure_debut, c.heure_fin, c.places_restante
-    FROM creneau c
-    WHERE c.id_salle = ?
+$all_creneaux = $pdo->query("
+    SELECT c.id_creneau, s.numero as numero_salle, d.date as date_texte, c.heure_debut, c.heure_fin, c.places_restante 
+    FROM creneau c 
+    JOIN salle s ON c.id_salle = s.id_salle 
+    JOIN date_expo d ON c.id_date = d.id_date 
     ORDER BY c.heure_debut ASC
-";
-$creneaux_stmt = $pdo->prepare($queryCreneaux);
-$creneaux_stmt->execute([$id_salle_active]);
-$tous_les_creneaux = $creneaux_stmt->fetchAll();
+")->fetchAll();
+
+// Structuration des créneaux en tableau associatif pour injection au JavaScript
+$creneaux_json_data = [];
+foreach ($all_creneaux as $c) {
+    $creneaux_json_data[$c['numero_salle']][$c['date_texte']][] = [
+        'id_creneau' => $c['id_creneau'],
+        'heure_debut' => $c['heure_debut'],
+        'heure_fin' => $c['heure_fin'],
+        'places_restante' => $c['places_restante']
+    ];
+}
+$creneaux_json = json_encode($creneaux_json_data);
+
+// Récupération du profil utilisateur connecté pour vérifier l'accès au buffet
+$stmtP = $pdo->prepare("SELECT profil FROM visiteur WHERE id_visiteur = ?");
+$stmtP->execute([$id_visiteur]);
+$profil_visiteur = $stmtP->fetchColumn() ?: '';
+$buffet_autorise = in_array($profil_visiteur, ["Enseignant·e", "Personnel de l'université", "Visiteur·euse extérieur·e", "Professionnels/partenaires"]);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>E-LLUSION — Inscription</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
-  <style>
-    .creneau-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:.5rem; margin-top:.5rem; }
-    .creneau-btn {
-      border:1.5px solid #ddd; border-radius:8px; padding:.5rem .4rem;
-      text-align:center; font-family:'DM Sans',sans-serif; font-size:.8rem;
-      cursor:pointer; background:var(--white); transition:all .2s; line-height:1.4;
-    }
-    .creneau-btn:hover:not(:disabled) { border-color:var(--mint-dark); }
-    .creneau-btn.selected { border-color:var(--mint-dark); background:var(--mint); font-weight:600; }
-    .creneau-btn:disabled { opacity:.4; cursor:not-allowed; background:#f5f5f5; }
-    .creneau-btn small { display:block; font-size:.7rem; color:#888; }
-    .buffet-group { display:none; align-items:center; gap:.75rem; margin-top:.5rem; }
-    .error-msg { background:#ffe5e5; border:1px solid #e0302a; border-radius:10px; padding:.85rem 1.2rem; font-size:.88rem; color:#b00000; margin-bottom:1rem; }
-    .success-msg { background:#d4f5ee; border:1px solid #7de0d2; border-radius:10px; padding:1rem 1.2rem; font-size:.9rem; color:#005c52; margin-bottom:1rem; }
-    .day-grid { display:flex; gap:.75rem; flex-wrap:wrap; }
-    .day-btn { border:1.5px solid #ddd; border-radius:8px; padding:.6rem 1rem; background:var(--white); cursor:pointer; font-family:'DM Sans',sans-serif; font-size:.85rem; font-weight:500; transition:all .2s; }
-    .day-btn.selected { border-color:var(--mint-dark); background:var(--mint); font-weight:600; }
-  </style>
+    <meta charset="UTF-8">
+    <title>E-LLUSION — Formulaire de réservation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="style.css"/>
+    <style>
+        .booking-container { max-width: 700px; margin: 4rem auto; padding: 2rem; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; }
+        .form-group { margin-bottom: 2rem; display: flex; flex-direction: column; gap: .5rem; font-family: 'DM Sans'; }
+        .form-group label { font-weight: 500; font-size: .95rem; color: #111; }
+        .form-group select, .form-group input[type="text"], .form-group input[type="email"] { padding: .75rem; border: 1px solid #ccc; border-radius: 6px; font-family: 'DM Sans'; font-size: 0.95rem; background: #fff; }
+        .form-group select:focus, .form-group input:focus { border-color: #00b8a0; outline: none; box-shadow: 0 0 0 3px rgba(0, 184, 160, 0.1); }
+        
+        /* Grille des boutons de dates */
+        .day-grid { display: flex; gap: .75rem; flex-wrap: wrap; }
+        .day-btn { border: 1.5px solid #ddd; border-radius: 8px; padding: .6rem 1.2rem; background: #fff; cursor: pointer; font-family: 'DM Sans'; font-size: .9rem; font-weight: 500; transition: all .2s; }
+        .day-btn.selected { border-color: #00b8a0; background: #e0faf7; color: #007a6a; font-weight: 600; }
+        
+        /* Contrôle d'incrémentation du nombre de personnes */
+        .number-stepper { display: flex; align-items: center; gap: .5rem; }
+        .btn-step { background: #fff; border: 1.5px solid #ddd; color: #222; font-family: 'Space Mono'; font-weight: bold; font-size: 1.2rem; width: 42px; height: 42px; border-radius: 6px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+        .btn-step:hover { border-color: #00b8a0; color: #00b8a0; }
+        .number-stepper input { width: 60px; text-align: center; font-family: 'Space Mono'; font-size: 1rem; font-weight: bold; padding: .65rem; border: 1.5px solid #ddd; border-radius: 6px; background: #fdfdfd; }
+        
+        /* Fiche d'un accompagnant */
+        .acc-card { border-left: 4px solid #00b8a0; background: #f9fbfb; padding: 1.25rem; margin-top: 1rem; border-radius: 0 8px 8px 0; border-top: 1px solid #edf2f2; border-right: 1px solid #edf2f2; border-bottom: 1px solid #edf2f2; }
+        
+        /* Grille des créneaux horaires */
+        .creneau-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .75rem; margin-top: .5rem; }
+        .creneau-btn { border: 1.5px solid #ddd; border-radius: 8px; padding: .75rem .5rem; text-align: center; font-family: 'DM Sans'; font-size: .85rem; cursor: pointer; background: #fff; transition: all .2s; line-height: 1.4; }
+        .creneau-btn small { display: block; font-size: 0.75rem; color: #666; margin-top: 2px; }
+        .creneau-btn.selected { border-color: #00b8a0; background: #e0faf7; color: #007a6a; font-weight: 600; }
+        .creneau-btn:disabled { opacity: .4; cursor: not-allowed; background: #f5f5f5; border-color: #e0e0e0; color: #999; }
+        .creneau-btn:disabled small { color: #999; }
+        
+        /* Notifications */
+        .alert-msg { background: #ffe5e5; border: 1px solid #e0302a; border-radius: 8px; padding: 1rem; color: #b00000; font-family: 'DM Sans'; margin-bottom: 1.5rem; font-size: 0.95rem; }
+        .success-banner { background: #d4f5ee; border: 1px solid #7de0d2; border-radius: 8px; padding: 1rem; color: #005c52; font-family: 'DM Sans'; margin-bottom: 1.5rem; font-size: 0.95rem; text-align: center; font-weight: 500; }
+        
+        .btn-submit-booking { display: block; width: 100%; background: #00b8a0; color: #fff; border: none; font-family: 'Space Mono'; font-weight: bold; padding: 1rem; text-transform: uppercase; cursor: pointer; margin-top: 2rem; border-radius: 6px; font-size: 1rem; transition: background 0.2s; letter-spacing: 1px; }
+        .btn-submit-booking:hover { background: #009682; }
+    </style>
 </head>
 <body>
-
 <?php include __DIR__ . '/includes/nav.php'; ?>
 
-<main>
-  <div class="page-header">
-    <h1>INSCRIPTION</h1>
-    <p>Réservez votre créneau pour l'exposition E-LLUSION</p>
-  </div>
-  
+<div class="booking-container">
+    <h1 style="font-family: 'Space Mono'; text-transform: uppercase; margin-top:0; font-size:1.8rem; margin-bottom:2rem;">Nouvelle réservation<span>.</span></h1>
 
-  <div class="form-wrapper">
-    <div class="form-card">
+    <?php if ($success): ?>
+        <div class="success-banner">🎉 <?= $success ?></div>
+    <?php endif; ?>
 
-      <?php if ($success): ?>
-        <div class="success-msg">
-          ✅ <strong>Inscription confirmée !</strong><br/>
-          Votre token de modification : <code style="background:#b2f0e8;padding:.1rem .4rem;border-radius:4px"><?= htmlspecialchars($success) ?></code><br/>
-          <small>Conservez-le pour modifier ou annuler votre réservation.</small>
+    <?php if ($error): ?>
+        <div class="alert-msg">⚠️ <?= htmlspecialchars($error) ?></div>
+    <?php endif; ?>
+
+    <form method="POST" onsubmit="return validateForm()">
+        <input type="hidden" name="id_creneau" id="id_creneau_hidden" value="">
+        <input type="hidden" name="date" id="date_hidden" value="2026-06-18">
+
+        <div class="form-group">
+            <label for="salle">Sélectionner une salle *</label>
+            <select id="salle" onchange="onSalleChange()" required>
+                <option value="">— Sélectionner le thème de l'exposition —</option>
+                <?php foreach ($salles as $s): ?>
+                    <option value="<?= $s['numero'] ?>">Salle <?= $s['numero'] ?> — <?= htmlspecialchars($s['nom_thematique']) ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
-      <?php else: ?>
 
-        <?php if ($error): ?>
-          <div class="error-msg">⚠️ <?= htmlspecialchars($error) ?></div>
+        <div class="form-group">
+            <label>Sélectionner la date de visite *</label>
+            <div class="day-grid">
+                <button type="button" class="day-btn selected" id="day1" onclick="selectDay('2026-06-18')">Jeudi 18 juin 2026</button>
+                <button type="button" class="day-btn" id="day2" onclick="selectDay('2026-06-19')">Vendredi 19 juin 2026</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Nombre total de places requises * <span style="color:#666; font-size:.8rem; font-weight:normal;">(Vous inclus, max. 12 personnes)</span></label>
+            <div class="number-stepper">
+                <button type="button" class="btn-step" onclick="changeQuantity(-1)">-</button>
+                <input type="number" name="nb_personnes" id="nbPersonnes" min="1" max="12" value="1" readonly required>
+                <button type="button" class="btn-step" onclick="changeQuantity(1)">+</button>
+            </div>
+        </div>
+
+        <div id="accompagnantsWrapper"></div>
+
+        <?php if ($buffet_autorise): ?>
+            <div class="form-group" style="flex-direction: row; align-items: center; gap: .6rem; margin-top: 2rem; background: #fcfdfd; border: 1px solid #e2eceb; padding: 1rem; border-radius: 8px;">
+                <input type="checkbox" name="participe_buffet" id="participe_buffet" style="width: 18px; height: 18px; margin:0; cursor:pointer;">
+                <label for="participe_buffet" style="cursor:pointer; font-size: .9rem; font-weight: 500; margin:0;">
+                    Je souhaite participer au buffet de vernissage <span style="color:#00b8a0; font-weight:bold;">(Jeudi soir à partir de 18h30)</span>
+                </label>
+            </div>
         <?php endif; ?>
 
-        <form method="POST" id="inscriptionForm" onsubmit="return validateForm()">
-          <input type="hidden" name="id_creneau" id="id_creneau_hidden" value="<?= $prefill_creneau ?>"/>
-          <input type="hidden" name="date"  id="date_hidden"  value=""/>
-          <input type="hidden" name="salle" id="salle_hidden" value="<?= htmlspecialchars($prefill_salle) ?>"/>
-
-          <p class="form-section-title">Informations personnelles</p>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Nom *</label>
-              <input type="text" name="nom" placeholder="Votre nom" value="<?= htmlspecialchars($_POST['nom'] ?? '') ?>" required>
-            </div>
-            <div class="form-group">
-              <label>Prénom *</label>
-              <input type="text" name="prenom" placeholder="Votre prénom" value="<?= htmlspecialchars($_POST['prenom'] ?? '') ?>" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Email *</label>
-            <input type="email" name="email" placeholder="votre.email@exemple.com" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
-          </div>
-
-          <div class="form-group">
-            <label>Qui êtes-vous ? *</label>
-            <select name="profil" id="profil" onchange="toggleBuffet()" required>
-              <option value="">— Sélectionnez —</option>
-              <?php
-              $profils = ['Étudiant·e', 'Enseignant·e', "Personnel de l'université", 'Visiteur·euse extérieur·e', 'Professionnels/partenaires'];
-              foreach ($profils as $p):
-              ?>
-              <option <?= (($_POST['profil'] ?? '') === $p) ? 'selected' : '' ?>><?= htmlspecialchars($p) ?></option>
-              <?php endforeach; ?>
-            </select>
-          </div>
-
-          <div class="buffet-group" id="buffetGroup">
-            <input type="checkbox" name="participe_buffet" id="participe_buffet"
-              <?= isset($_POST['participe_buffet']) ? 'checked' : '' ?>
-              style="width:16px;height:16px"/>
-            <label for="participe_buffet" style="font-size:.88rem;cursor:pointer">
-              Participer au buffet du jeudi 18 juin à 18h30
-            </label>
-          </div>
-
-          <hr class="form-divider">
-          <p class="form-section-title">Réservation</p>
-
-          <div class="form-group">
-            <label>Salle *</label>
-            <select id="salle" onchange="onSalleChange()">
-              <option value="">— Choisissez une salle —</option>
-              <?php foreach ($salles as $s): ?>
-                <option value="<?= $s['numero'] ?>"
-                  <?= ($prefill_salle && strpos($prefill_salle, $s['numero']) !== false) ? 'selected' : '' ?>>
-                  Salle <?= $s['numero'] ?> — <?= htmlspecialchars($s['nom_thematique']) ?>
-                </option>
-              <?php endforeach; ?>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Jour *</label>
-            <div class="day-grid">
-              <button type="button" class="day-btn" id="day1" onclick="selectDay('2026-06-18')">Jeudi 18 juin 2026</button>
-              <button type="button" class="day-btn" id="day2" onclick="selectDay('2026-06-19')">Vendredi 19 juin 2026</button>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Nombre de personnes * <span style="color:#888;font-size:.8rem">(max. 12)</span></label>
-            <input type="number" name="nb_personnes" id="nbPersonnes" min="1" max="12"
-              placeholder="Ex : 3" value="<?= htmlspecialchars($_POST['nb_personnes'] ?? '') ?>"
-              onchange="renderCreneaux()" required>
-            <small style="color:#888;font-size:.8rem">Nombre total de participants, vous inclus·e</small>
-          </div>
-
-          <!-- Créneaux -->
-          <div class="form-group" id="creneauxWrapper" style="display:none">
-            <label>Créneau horaire *</label>
+        <div class="form-group" id="creneauxWrapper" style="display:none; margin-top: 2rem;">
+            <label style="font-weight: bold; color: #007a6a; text-transform: uppercase; font-family: 'Space Mono'; font-size:0.85rem; letter-spacing:0.5px;">// Sélectionner un horaire disponible *</label>
             <div id="creneauxContainer"></div>
-          </div>
+        </div>
 
-          <div class="info-box">
-            <strong>ℹ️ Informations importantes :</strong><br/>
-            Jauge limitée à 12 personnes par créneau et par salle<br/>
-            Conservez votre token pour modifier ou annuler votre réservation
-          </div>
-
-          <button type="submit" class="btn-submit">Confirmer mon inscription</button>
-
-          <p class="contact-hint">
-            Pour toute question :
-            <a href="mailto:contact.ellusion@univ-smb.fr">contact.ellusion@univ-smb.fr</a>
-          </p>
-
-        </form>
-
-      <?php endif; ?>
-    </div>
-  </div>
-</main>
+        <button type="submit" class="btn-submit-booking">Confirmer et réserver les places</button>
+    </form>
+</div>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
 
 <script>
+// Injection des données de créneaux préparées par PHP
 const CRENEAUX_DATA = <?= $creneaux_json ?>;
-let selectedDay   = null;
+let selectedDay = '2026-06-18';
 let selectedSalle = null;
 
+function changeQuantity(amount) {
+    const input = document.getElementById('nbPersonnes');
+    let val = parseInt(input.value) || 1;
+    val += amount;
+    if (val < 1) val = 1;
+    if (val > 12) val = 12;
+    input.value = val;
+    gererChampsAccompagnants();
+}
+
+function gererChampsAccompagnants() {
+    const nbTotal = parseInt(document.getElementById('nbPersonnes').value) || 1;
+    const wrapper = document.getElementById('accompagnantsWrapper');
+    wrapper.innerHTML = '';
+    
+    if (nbTotal > 1) {
+        let html = '<p style="font-family:\'Space Mono\'; font-size:.9rem; margin-top:2rem; margin-bottom:0.5rem; color:#007a6a; font-weight: bold;">// Identité des accompagnants</p>';
+        for (let i = 1; i < nbTotal; i++) {
+            html += `
+                <div class="acc-card">
+                    <div style="font-weight:700; font-family:'Space Mono'; font-size:.8rem; text-transform:uppercase; color:#555; margin-bottom:.75rem;">Accompagnant n°${i}</div>
+                    <div style="display:flex; gap:1rem; margin-bottom:0.75rem;">
+                        <div class="form-group" style="flex:1; margin-bottom:0;">
+                            <label style="font-size:0.85rem;">Nom *</label>
+                            <input type="text" name="accompagnants[${i}][nom]" required>
+                        </div>
+                        <div class="form-group" style="flex:1; margin-bottom:0;">
+                            <label style="font-size:0.85rem;">Prénom *</label>
+                            <input type="text" name="accompagnants[${i}][prenom]" required>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label style="font-size:0.85rem;">Adresse e-mail <span style="color:#777; font-weight:normal;">(Optionnel — pour envoi du billet)</span></label>
+                        <input type="email" name="accompagnants[${i}][email]">
+                    </div>
+                </div>`;
+        }
+        wrapper.innerHTML = html;
+    }
+    renderCreneaux();
+}
+
 function selectDay(dateStr) {
-  selectedDay = dateStr;
-  document.getElementById('day1').classList.toggle('selected', dateStr === '2026-06-18');
-  document.getElementById('day2').classList.toggle('selected', dateStr === '2026-06-19');
-  document.getElementById('date_hidden').value = dateStr;
-  renderCreneaux();
+    selectedDay = dateStr;
+    document.getElementById('day1').classList.toggle('selected', dateStr === '2026-06-18');
+    document.getElementById('day2').classList.toggle('selected', dateStr === '2026-06-19');
+    document.getElementById('date_hidden').value = dateStr;
+    renderCreneaux();
 }
 
 function onSalleChange() {
-  const sel = document.getElementById('salle');
-  selectedSalle = sel.value || null;
-  document.getElementById('salle_hidden').value = sel.value ? sel.options[sel.selectedIndex].text : '';
-  document.getElementById('id_creneau_hidden').value = '';
-  renderCreneaux();
+    const sel = document.getElementById('salle');
+    selectedSalle = sel.value || null;
+    document.getElementById('id_creneau_hidden').value = '';
+    renderCreneaux();
 }
 
 function renderCreneaux() {
-  const wrapper   = document.getElementById('creneauxWrapper');
-  const container = document.getElementById('creneauxContainer');
-  const nb        = parseInt(document.getElementById('nbPersonnes').value) || 1;
+    const wrapper = document.getElementById('creneauxWrapper');
+    const container = document.getElementById('creneauxContainer');
+    const nb = parseInt(document.getElementById('nbPersonnes').value) || 1;
 
-  if (!selectedSalle || !selectedDay) {
-    wrapper.style.display = 'none';
-    return;
-  }
+    if (!selectedSalle || !selectedDay) {
+        wrapper.style.display = 'none';
+        return;
+    }
 
-  const creneaux = (CRENEAUX_DATA[selectedSalle] || {})[selectedDay] || [];
-  wrapper.style.display = 'block';
+    const creneaux = (CRENEAUX_DATA[selectedSalle] || {})[selectedDay] || [];
+    wrapper.style.display = 'block';
 
-  if (creneaux.length === 0) {
-    container.innerHTML = '<p style="color:#888;font-size:.85rem;padding:.5rem 0">Aucun créneau disponible pour cette salle / ce jour.</p>';
-    return;
-  }
+    if (creneaux.length === 0) {
+        container.innerHTML = '<p style="color:#888; font-size:.85rem; padding:.5rem 0; font-family:\'DM Sans\';">Aucun créneau horaire programmé pour cette configuration.</p>';
+        return;
+    }
 
-  let html = '<div class="creneau-grid">';
-  creneaux.forEach(function(c) {
-    const disabled = c.places_restante < nb;
-    const label    = c.heure_debut.slice(0,5) + '–' + c.heure_fin.slice(0,5);
-    const badge    = disabled ? '<small>Complet</small>' : '<small>' + c.places_restante + ' place(s)</small>';
-    html += '<button type="button" class="creneau-btn"'
-          + (disabled ? ' disabled' : '')
-          + ' onclick="selectCreneau(' + c.id_creneau + ', this)">'
-          + label + badge + '</button>';
-  });
-  html += '</div>';
-  container.innerHTML = html;
+    let html = '<div class="creneau-grid">';
+    creneaux.forEach(function(c) {
+        const disabled = c.places_restante < nb;
+        const label = c.heure_debut.slice(0,5) + ' – ' + c.heure_fin.slice(0,5);
+        const badge = disabled ? 'Complet' : c.places_restante + ' pl. dispos';
+        
+        html += `<button type="button" class="creneau-btn" id="cbtn-${c.id_creneau}" ${disabled ? 'disabled' : ''} onclick="selectCreneau(${c.id_creneau})">
+                    <strong>${label}</strong>
+                    <small>${badge}</small>
+                 </button>`;
+    });
+    html += '</div>';
+    container.innerHTML = html;
 }
 
-function selectCreneau(id, btn) {
-  document.querySelectorAll('.creneau-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  document.getElementById('id_creneau_hidden').value = id;
-}
-
-const BUFFET_PROFILS = ["Enseignant·e", "Personnel de l'université", "Visiteur·euse extérieur·e", "Professionnels/partenaires"];
-function toggleBuffet() {
-  const profil = document.getElementById('profil').value;
-  const group  = document.getElementById('buffetGroup');
-  group.style.display = BUFFET_PROFILS.includes(profil) ? 'flex' : 'none';
-  if (!BUFFET_PROFILS.includes(profil)) document.getElementById('participe_buffet').checked = false;
+function selectCreneau(id) {
+    document.querySelectorAll('.creneau-btn').forEach(b => b.classList.remove('selected'));
+    const targetBtn = document.getElementById('cbtn-' + id);
+    if (targetBtn) targetBtn.classList.add('selected');
+    document.getElementById('id_creneau_hidden').value = id;
 }
 
 function validateForm() {
-  const id = document.getElementById('id_creneau_hidden').value;
-  if (!id) { alert('Merci de sélectionner un créneau horaire.'); return false; }
-  return true;
+    const id = document.getElementById('id_creneau_hidden').value;
+    if (!id) { 
+        alert('Veuillez sélectionner un horaire de visite en cliquant sur l\'une des cases.'); 
+        return false; 
+    }
+    return true;
 }
 
-// Pré-remplissage depuis URL
-(function() {
-  const params = new URLSearchParams(window.location.search);
-  const s = params.get('salle');
-  if (s) {
-    const match = s.match(/(\d+)/);
-    if (match) {
-      const sel = document.getElementById('salle');
-      for (let opt of sel.options) {
-        if (opt.value === match[1] || opt.value.replace(/^0+/,'') === match[1].replace(/^0+/,'')) {
-          sel.value = opt.value;
-          selectedSalle = opt.value;
-          document.getElementById('salle_hidden').value = opt.text;
-          break;
-        }
-      }
-    }
-  }
-  const c = params.get('creneau');
-  if (c) document.getElementById('id_creneau_hidden').value = c;
-
-  toggleBuffet();
-  renderCreneaux();
-})();
+// Initialisation au chargement de la page
+window.addEventListener('DOMContentLoaded', () => {
+    onSalleChange();
+    selectDay(selectedDay);
+});
 </script>
-
 </body>
 </html>

@@ -1,3 +1,5 @@
+<?php include __DIR__ . '/includes/nav.php'; ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -245,7 +247,6 @@
   </style>
 </head>
 <body>
-<?php include __DIR__ . '/includes/nav.php'; ?>
 
 
 
@@ -274,8 +275,9 @@
         <span class="programme-item">Dispositifs tactiles et gestuels</span>
         <span class="programme-item">Expérience multi-sensorielle</span>
       </div>
-      <a class="btn-reserver" href="inscription.php?salle=Salle%20002">Réserver cette salle </a>
-    </div>
+<a href="inscription.php?salle=<?= $salle['numero'] ?>" class="btn-reserver">
+    Réserver cette salle
+</a>    </div>
 
     <div class="salle-card">
       <div class="salle-numero" data-num="001">001</div>
@@ -290,8 +292,9 @@
         <span class="programme-item">Visualisation de présence numérique</span>
         <span class="programme-item">Œuvres interactives sur les réseaux sociaux</span>
       </div>
-      <a class="btn-reserver" href="inscription.php?salle=Salle%20001">Réserver cette salle </a>
-    </div>
+<a href="inscription.php?salle=<?= $salle['numero'] ?>" class="btn-reserver">
+    Réserver cette salle
+</a>    </div>
 
     <div class="salle-card">
       <div class="salle-numero" data-num="005">005</div>
@@ -306,8 +309,9 @@
         <span class="programme-item">Installations visuelles en mouvement</span>
         <span class="programme-item">Expériences de distorsion sensorielle</span>
       </div>
-      <a class="btn-reserver" href="inscription.php?salle=Salle%20005">Réserver cette salle </a>
-    </div>
+<a href="inscription.php?salle=<?= $salle['numero'] ?>" class="btn-reserver">
+    Réserver cette salle
+</a>    </div>
 
     <div class="salle-card">
       <div class="salle-numero" data-num="021">021</div>
@@ -322,8 +326,9 @@
         <span class="programme-item">Création de notre petit nous</span>
         <span class="programme-item">Expérience de co-création visage déformé</span>
       </div>
-      <a class="btn-reserver" href="inscription.php?salle=Salle%20021">Réserver cette salle </a>
-    </div>
+<a href="inscription.php?salle=<?= $salle['numero'] ?>" class="btn-reserver">
+    Réserver cette salle
+</a>    </div>
 
   </div>
 
